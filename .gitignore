@@ -1,0 +1,11 @@
+.buildpath
+.gitignore
+.project
+.settings
+.idea
+.idea/www.icq.com (private).iml
+atlassian*
+.DS_Store
+*.conf
+*.conf.js
+*.conf.json
