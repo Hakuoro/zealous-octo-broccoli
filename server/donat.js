@@ -7,12 +7,15 @@ var logOnOptions = require(configPath);
 
 var admin = "76561198042384491";
 
-var authCode = 'DGTN5'; // Code received by email
+var authCode = '2P9QG'; // Code received by email
 
 /* STOP EDITING */
 
 var fs = require('fs');
 var crypto = require('crypto');
+
+var onTrade = 0;
+var TradeOpen = 0;
 
 var Steam = require('steam');
 var SteamWebLogOn = require('steam-weblogon');
@@ -55,13 +58,24 @@ steamClient.on('logOnResponse', function(logonResp) {
                 sessionID: sessionID,
                 webCookie: newCookie
             }, function(err, APIKey) {
+
+                // handle offers
                 offers.setup({
                     sessionID: sessionID,
                     webCookie: newCookie,
                     APIKey: APIKey
                 }, function () {
                     handleOffers();
+
+                    offers.loadMyInventory({
+                        appId: 730,
+                        contextId:2
+                    }, loadMyBags)
                 });
+
+
+
+
             });
         });
     }
@@ -77,10 +91,16 @@ steamUser.on('updateMachineAuth', function(sentry, callback) {
 });
 
 steamUser.on('tradeOffers', function(number) {
-    if (number > 0) {
+   /* if (number > 0) {
         handleOffers();
-    }
+    }*/
 });
+
+
+function loadMyBags($vara, $bags){
+
+    console.log($bags);
+}
 
 function handleOffers() {
     offers.getOffers({
@@ -181,7 +201,10 @@ function handleOffers() {
                         });
                     });
                 } else {
-                    offers.declineOffer({
+
+                    log('Offer ' + offer.tradeofferid + ' skipped!');
+
+                    /*offers.declineOffer({
                         tradeOfferId: offer.tradeofferid
                     }, function (error, result) {
                         if (error) {
@@ -189,7 +212,7 @@ function handleOffers() {
                         }
 
                         log('Offer ' + offer.tradeofferid + ' declined');
-                    });
+                    });*/
                 }
             });
         }
