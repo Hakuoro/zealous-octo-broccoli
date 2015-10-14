@@ -67,10 +67,10 @@ steamClient.on('logOnResponse', function(logonResp) {
                 }, function () {
                     handleOffers();
 
-                    offers.loadMyInventory({
+                    /*offers.loadMyInventory({
                         appId: 730,
                         contextId:2
-                    }, loadMyBags)
+                    }, loadMyBags)*/
                 });
 
 
@@ -91,9 +91,9 @@ steamUser.on('updateMachineAuth', function(sentry, callback) {
 });
 
 steamUser.on('tradeOffers', function(number) {
-   /* if (number > 0) {
+    if (number > 0) {
         handleOffers();
-    }*/
+    }
 });
 
 
@@ -119,7 +119,12 @@ function handleOffers() {
             && body.response.trade_offers_received
         ) {
             var descriptions = {};
-            body.response.descriptions.forEach(function (desc) {
+  /*          body.response.descriptions.forEach(function (desc) {
+                ^
+
+                TypeError: Cannot read property 'forEach' of undefined
+*/
+                body.response.descriptions.forEach(function (desc) {
                 descriptions[
                 desc.appid + ';' + desc.classid + ';' + desc.instanceid
                     ] = desc;
