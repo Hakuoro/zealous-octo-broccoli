@@ -24,9 +24,10 @@ var ws_unsupported_error_reported = false;
 var ws_auth_errors = 0;
 var ws_connection_type = 1;
 var connected = false;
+var trading = false;
 
 
-var ShadowKeyPrice = 31;
+var ShadowKeyPrice = 28.1;
 
 wsSubscribe("auth:82118763.1444641436.17701e21f5a9510117f4a0c02497103c35653436");
 wsSubscribe("newitems");
@@ -51,6 +52,16 @@ connection.connect(function(err){
         console.log("Error connecting database ... \n\n");
     }
 });
+
+setInterval(function() {
+    if (!trading) {
+        //buyShadowCase();
+    }
+}, 10000);
+
+setInterval(function() {
+    checkRetriveItems();
+}, 20000);
 
 
 
@@ -108,7 +119,7 @@ wsRegisterHandler("additem_go", function(item) {
             }
         );
 
-    }, 10000);
+    }, 8000);
 });
 
 
@@ -153,9 +164,6 @@ wsRegisterHandler("itemstatus_go", function(item) {
             }else{
                 console.log(json.error);
             }
-
-
-
         });
 
     }else if (item.status == 5 ){
@@ -179,17 +187,115 @@ wsRegisterHandler("itemstatus_go", function(item) {
 
 });
 
+function checkRetriveItems(){
 
+
+    var url = "https://csgo.tm/api/Trades/?key="+config.apiKey;
+
+    request(url, function (error, response, body) {
+
+        try {
+            var json = JSON.parse(body);
+            //{"result":"ok","id":"16159858"}
+        } catch (e) {
+            wsDoLog('This doesn\'t look like a valid JSON: '+body);
+        }
+
+        var id_item = 0, ui_bid = 0;
+
+        json.every(function(item) {
+            if (item.ui_status == 4) {
+                id_item = item.ui_id;
+                ui_bid = item.ui_bid;
+                return false;
+            }
+            return true;
+        });
+
+
+        if (id_item > 0){
+            retriveItem(id_item, ui_bid);
+        }
+
+    });
+}
+
+function retriveItem(id_item, ui_bid){
+
+
+    var url = "https://csgo.tm/api/ItemRequest/out/"+ui_bid+"/?key="+config.apiKey;
+
+    console.log("Auto Retrive item "+id_item);
+
+    request(url, function (error, response, body) {
+
+        try {
+            var json = JSON.parse(body);
+        } catch (e) {
+            wsDoLog('This doesn\'t look like a valid JSON: '+body);
+        }
+
+        console.log("Retrive item response: "+id_item);
+        if (json.success == true){
+
+            var sql = 'update csgotm_sales set `message` = ?' +
+                ' where id_csgo = ?';
+
+            connection.query({
+                    sql: sql
+                },
+                [json.secret, id_item],
+                function (error, results, fields) {
+                    if (!error){
+                    }else{
+                        console.log(sql);
+                        console.log(error);
+                    }
+                }
+            );
+
+            console.log("Retrive ok "+id_item)
+        }else{
+            console.log(json.error);
+        }
+    });
+}
+
+
+function buyShadowCase(){
+
+   /* var url = "https://csgo.tm/api/Buy/1293508920_0/"+(ShadowKeyPrice * 100)+"/d237e8e89ac6173e7335f76e33e8afbd/?key="+config.apiKey;
+    console.log(url);
+
+    console.log("Request buy shadow case max price " + ShadowKeyPrice);
+    request(url, function (error, response, body) {
+
+        try {
+            var json = JSON.parse(body);
+            if (json.id != false){
+                console.log("Buy Ok, Store data!");
+                addCsgoItem(0, json.id, '', 0, 0, '');
+            }else{
+                console.log(json.result);
+                trading = true;
+            }
+
+        } catch (e) {
+            wsDoLog('This doesn\'t look like a valid JSON: '+body);
+        }
+    });*/
+}
 
 
 
 wsRegisterHandler("newitem", function(item) {
-    if (item.i_market_hash_name == 'Shadow Case' && item.i_classid == '1293508920' && item.ui_price < ShadowKeyPrice){
+   /* if (item.i_market_hash_name == 'Shadow Case' && item.i_classid == '1293508920' && item.ui_price < ShadowKeyPrice){
 
         var url = "https://csgo.tm/api/Buy/1293508920_0/"+(ShadowKeyPrice * 100)+"/d237e8e89ac6173e7335f76e33e8afbd/?key="+config.apiKey;
         console.log(url);
 
         console.log("Request buy shadow case: " + item.ui_price);
+        trading = true;
         request(url, function (error, response, body) {
 
             try {
@@ -204,45 +310,15 @@ wsRegisterHandler("newitem", function(item) {
             } catch (e) {
                 wsDoLog('This doesn\'t look like a valid JSON: '+body);
             }
+            trading = false;
         });
 
         //
 
 
-    }
+    }*/
 
-   /* data = JSON.parse(data);
-    if ($.notification.permissionLevel() === 'granted') {
-        console.log("Оповещения включены");
-        var onClickHandler = false;
-        if(data.url)
-            onClickHandler = function() {
-                var win = window.open(data.url, '_blank');
-                win.focus();
-            };
-        var options = {
-            iconUrl: '/images/logo.png',
-            tag: data.tag,
-            title: 'https://csgo.tm',
-            body: data.text,
-            onclick: onClickHandler,
-            onshow: function() {
-                console.log('Уведомление показано');
-            }
-        };
-        var notification = $.notification(options);
-    } else {
-        console.log("Оповещения запрещены браузером");
-        jQuery.jGrowl(data.text, { sticky: true, position: "bottom-right", themeState: "highlight" });
-    }
-    $('#chatAudio')[0].play();*/
 });
-
-/*wsRegisterHandler("money", function(data) {
-    jQuery("#wallet").html(data);
-});*/
-
-
 
 function wsIsConnected() {
     return ws_connected;

@@ -119,16 +119,13 @@ function handleOffers() {
             && body.response.trade_offers_received
         ) {
             var descriptions = {};
-  /*          body.response.descriptions.forEach(function (desc) {
-                ^
-
-                TypeError: Cannot read property 'forEach' of undefined
-*/
+            //if (body.response.descriptions) {
                 body.response.descriptions.forEach(function (desc) {
-                descriptions[
-                desc.appid + ';' + desc.classid + ';' + desc.instanceid
-                    ] = desc;
-            });
+                    descriptions[
+                    desc.appid + ';' + desc.classid + ';' + desc.instanceid
+                        ] = desc;
+                });
+            //}
 
             body.response.trade_offers_received.forEach(function (offer) {
                 if (offer.trade_offer_state !== 2) {

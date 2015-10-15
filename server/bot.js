@@ -1,7 +1,8 @@
 var request     = require('request');
 
 
-var url = "https://opskins.com/api/user_api.php?request=GetActiveSales&key=debb4a790d09035e400320034f282274";
+//var url = "https://opskins.com/api/user_api.php?request=GetActiveSales&key=d";
+var url = "https://opskins.com/api/user_api.php?request=test&key=";
 
 request(url, function (error, response, body) {
     console.log(body);
