@@ -120,11 +120,11 @@ function handleOffers() {
         ) {
             var descriptions = {};
             //if (body.response.descriptions) {
-                body.response.descriptions.forEach(function (desc) {
+               /* body.response.descriptions.forEach(function (desc) {
                     descriptions[
                     desc.appid + ';' + desc.classid + ';' + desc.instanceid
                         ] = desc;
-                });
+                });*/
             //}
 
             body.response.trade_offers_received.forEach(function (offer) {
@@ -138,21 +138,22 @@ function handleOffers() {
                 if (offer.items_to_receive) {
                     offerMessage += 'Items to receive: ' +
                     offer.items_to_receive.map(function (item) {
-                        var desc = descriptions[
+                        var desc =
                         item.appid + ';' + item.classid + ';' + item.instanceid
-                            ];
-                        return desc.name + ' (' + desc.type + ')';
+                            ;
+                        return item.appid + ';' + item.classid + ';' + item.instanceid
+                            ;
                     }).join(', ') + '\n';
                 }
 
                 if (offer.items_to_give) {
-                    offerMessage += 'Items to give: ' +
+                   /* offerMessage += 'Items to give: ' +
                     offer.items_to_give.map(function (item) {
                         var desc = descriptions[
                         item.appid + ';' + item.classid + ';' + item.instanceid
                             ];
                         return desc.name + ' (' + desc.type + ')';
-                    }).join(', ') + '\n';
+                    }).join(', ') + '\n';*/
                 }
 
                 if (offer.message && offer.message !== '') {

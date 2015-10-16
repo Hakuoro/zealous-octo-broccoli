@@ -55,7 +55,7 @@ connection.connect(function(err){
 
 setInterval(function() {
     if (!trading) {
-        //buyShadowCase();
+        buyShadowCase();
     }
 }, 10000);
 
@@ -264,7 +264,7 @@ function retriveItem(id_item, ui_bid){
 
 function buyShadowCase(){
 
-   /* var url = "https://csgo.tm/api/Buy/1293508920_0/"+(ShadowKeyPrice * 100)+"/d237e8e89ac6173e7335f76e33e8afbd/?key="+config.apiKey;
+    var url = "https://csgo.tm/api/Buy/1293508920_0/"+(ShadowKeyPrice * 100)+"/d237e8e89ac6173e7335f76e33e8afbd/?key="+config.apiKey;
     console.log(url);
 
     console.log("Request buy shadow case max price " + ShadowKeyPrice);
@@ -283,13 +283,13 @@ function buyShadowCase(){
         } catch (e) {
             wsDoLog('This doesn\'t look like a valid JSON: '+body);
         }
-    });*/
+    });
 }
 
 
 
 wsRegisterHandler("newitem", function(item) {
-   /* if (item.i_market_hash_name == 'Shadow Case' && item.i_classid == '1293508920' && item.ui_price < ShadowKeyPrice){
+    if (item.i_market_hash_name == 'Shadow Case' && item.i_classid == '1293508920' && item.ui_price < ShadowKeyPrice){
 
         var url = "https://csgo.tm/api/Buy/1293508920_0/"+(ShadowKeyPrice * 100)+"/d237e8e89ac6173e7335f76e33e8afbd/?key="+config.apiKey;
         console.log(url);
@@ -316,7 +316,7 @@ wsRegisterHandler("newitem", function(item) {
         //
 
 
-    }*/
+    }
 
 });
 
