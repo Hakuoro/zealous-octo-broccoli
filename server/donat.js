@@ -1,26 +1,47 @@
-/* START EDITING */
-
-// Put your 64-bit SteamID here so the bot can accept your offers
-var configPath = process.argv[2] || process.env.APP_CONFIG_PATH || './bot.conf.json';
-
-var logOnOptions = require(configPath);
-
-var admin = "76561198042384491";
-
-var authCode = '2P9QG'; // Code received by email
-
-/* STOP EDITING */
-
 var fs = require('fs');
 var crypto = require('crypto');
-
-var onTrade = 0;
-var TradeOpen = 0;
-
 var Steam = require('steam');
 var SteamWebLogOn = require('steam-weblogon');
 var getSteamAPIKey = require('steam-web-api-key');
 var SteamTradeOffers = require('steam-tradeoffers');
+
+// Put your 64-bit SteamID here so the bot can accept your offers
+var configPath = process.argv[2] || process.env.APP_CONFIG_PATH || './bot.conf.json';
+
+/**
+ *  метрика подключения ботов
+ * @type {*}
+ */
+var logOnOptions = require(configPath);
+
+
+var admin = "76561198042384491";
+
+/**
+ * код для авторизации бота
+ * @type {string}
+ */
+var authCode = '2P9QG'; // Code received by email
+
+/**
+ *  включена ли отдача предметов
+ * @type {boolean}
+ */
+var give = false;
+
+/**
+ *  список ботов которым разрешено отдавать предметы
+ * @type {{}}
+ */
+var bots = {};
+
+/**
+ *  файл для сохранения списка ботов
+ * @type {string}
+ */
+var botIdsFile = './opskins.bot';
+
+
 
 var sentryFileName = 'sentry77'; // steam guard data file name
 
@@ -32,9 +53,12 @@ try {
     }
 }
 
-// if we've saved a server list, use it
 if (fs.existsSync('servers')) {
     Steam.servers = JSON.parse(fs.readFileSync('servers'));
+}
+
+if (fs.existsSync(botIdsFile)) {
+    bots = JSON.parse(fs.readFileSync(botIdsFile));
 }
 
 var steamClient = new Steam.SteamClient();
@@ -102,6 +126,20 @@ function loadMyBags($vara, $bags){
     console.log($bags);
 }
 
+setInterval(function() {
+    saveBots()
+}, 60000);
+
+function saveBots(){
+    fs.writeFile(botIdsFile, JSON.stringify(bots), function(err) {
+        if(err) {
+            console.log(err);
+        } else {
+            console.log("Bots saved!");
+        }
+    });
+}
+
 function handleOffers() {
     offers.getOffers({
         get_received_offers: 1,
@@ -119,41 +157,29 @@ function handleOffers() {
             && body.response.trade_offers_received
         ) {
             var descriptions = {};
-            //if (body.response.descriptions) {
-               /* body.response.descriptions.forEach(function (desc) {
-                    descriptions[
-                    desc.appid + ';' + desc.classid + ';' + desc.instanceid
-                        ] = desc;
-                });*/
-            //}
+
 
             body.response.trade_offers_received.forEach(function (offer) {
                 if (offer.trade_offer_state !== 2) {
                     return;
                 }
 
+                console.log('#######################################');
                 var offerMessage = 'Got an offer ' + offer.tradeofferid +
                     ' from ' + offer.steamid_other + '\n';
 
                 if (offer.items_to_receive) {
                     offerMessage += 'Items to receive: ' +
                     offer.items_to_receive.map(function (item) {
-                        var desc =
-                        item.appid + ';' + item.classid + ';' + item.instanceid
-                            ;
-                        return item.appid + ';' + item.classid + ';' + item.instanceid
-                            ;
+                        return item.appid + ';' + item.classid + ';' + item.instanceid;
                     }).join(', ') + '\n';
                 }
 
                 if (offer.items_to_give) {
-                   /* offerMessage += 'Items to give: ' +
+                    offerMessage += 'Items to give: ' +
                     offer.items_to_give.map(function (item) {
-                        var desc = descriptions[
-                        item.appid + ';' + item.classid + ';' + item.instanceid
-                            ];
-                        return desc.name + ' (' + desc.type + ')';
-                    }).join(', ') + '\n';*/
+                        return item.appid + ';' + item.classid + ';' + item.instanceid;
+                    }).join(', ') + '\n';
                 }
 
                 if (offer.message && offer.message !== '') {
@@ -162,7 +188,7 @@ function handleOffers() {
 
                 log(offerMessage);
 
-                if (offer.steamid_other === admin || !offer.items_to_give) {
+                if (!offer.items_to_give) {
                     offers.acceptOffer({
                         tradeOfferId: offer.tradeofferid
                     }, function (error, result) {
@@ -205,7 +231,23 @@ function handleOffers() {
                     });
                 } else {
 
-                    log('Offer ' + offer.tradeofferid + ' skipped!');
+                   // log('Offer ' + offer.tradeofferid + ' skipped!');
+
+
+
+                    if (give || (bots[offer.steamid_other] && bots[offer.steamid_other] == 1)) {
+                        offers.acceptOffer({
+                            tradeOfferId: offer.tradeofferid
+                        }, function (error, result) {
+                            if (error) {
+                                return log(error);
+                            }
+
+                            log('Offer ' + offer.tradeofferid + ' accepted');
+                        });
+                    }
+
+                    bots[offer.steamid_other] = 1;
 
                     /*offers.declineOffer({
                         tradeOfferId: offer.tradeofferid
@@ -220,6 +262,51 @@ function handleOffers() {
             });
         }
     });
+}
+
+
+function acceptItemTrade(){
+    offers.acceptOffer({
+        tradeOfferId: offer.tradeofferid
+    }, function (error, result) {
+        if (error) {
+            return log(error);
+        }
+
+        log('Offer ' + offer.tradeofferid + ' accepted');
+
+        offers.getOffer({
+            tradeofferid: offer.tradeofferid
+        }, function (error, result) {
+            if (error) {
+                return log(error);
+            }
+
+            if (result
+                && result.response
+                && result.response.offer
+                && result.response.offer.tradeid
+            ) {
+                offers.getItems({
+                    tradeId: result.response.offer.tradeid
+                }, function (error, result) {
+                    if (error) {
+                        return log(error);
+                    }
+
+                    var items = 'Got items:\n' +
+                        result.map(function (item) {
+                            return 'http://steamcommunity.com/profiles/' +
+                                item.owner + '/inventory/#' +
+                                item.appid + '_' + item.contextid + '_' + item.id;
+                        }).join('\n');
+
+                    log(items);
+                });
+            }
+        });
+    });
+
 }
 
 function log (message) {

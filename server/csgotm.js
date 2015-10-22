@@ -1,6 +1,7 @@
 var WebSocket   = require('ws');
 var request     = require('request');
 var mysql       = require('mysql');
+var sleep = require('sleep');
 
 var configPath = process.argv[2] || process.env.APP_CONFIG_PATH || './db.conf.json';
 
@@ -24,10 +25,19 @@ var ws_unsupported_error_reported = false;
 var ws_auth_errors = 0;
 var ws_connection_type = 1;
 var connected = false;
-var trading = false;
+var trading = {} ;
 
 
-var ShadowKeyPrice = 28.1;
+trading["1293508920_0"] = false;
+trading["384801319_0"] = false;
+trading["926978479_0"] = false;
+trading["991959905_0"] = false;
+
+
+var ShadowKeyPrice = 25;
+var PhoenixPrice = 0.71;
+var Croma2CasePrice = 2;
+var FalchionCasePrice = 0.71;
 
 wsSubscribe("auth:82118763.1444641436.17701e21f5a9510117f4a0c02497103c35653436");
 wsSubscribe("newitems");
@@ -53,15 +63,65 @@ connection.connect(function(err){
     }
 });
 
-setInterval(function() {
-    if (!trading) {
-        buyShadowCase();
+function sleep(time, callback) {
+    var stop = new Date().getTime();
+    while(new Date().getTime() < stop + time) {
+        ;
     }
-}, 10000);
+    callback();
+}
+
+setInterval(function() {
+
+    if (!trading["1293508920_0"]) {
+        buyItem('auto shadow case', ShadowKeyPrice, "1293508920_0", "d237e8e89ac6173e7335f76e33e8afbd", false);
+    }
+
+
+    sleep.usleep(1000000);
+    if (!trading["926978479_0"]) {
+        buyItem('auto croma 2 case', Croma2CasePrice, "926978479_0", "7e3f6d929be4fde9184e3fa3fd06f5f5", false);
+    }
+
+
+    sleep.usleep(1000000);
+    if (!trading["384801319_0"]) {
+        buyItem('auto phoenix case', PhoenixPrice, "384801319_0", "24b506a9f9a4ba7f5cc559beaa2f52db", false);
+    }
+
+    sleep.usleep(1000000);
+    if (!trading["991959905_0"]) {
+        buyItem('auto falshion case', FalchionCasePrice, "991959905_0", "1a46f82e75779d8e97f9875b71ba2ae1", false);
+    }
+
+
+
+
+}, 5000);
 
 setInterval(function() {
     checkRetriveItems();
 }, 20000);
+
+wsRegisterHandler("newitem", function(item) {
+    if (item.i_classid == '1293508920' && item.ui_price < ShadowKeyPrice){
+
+        buyItem('shadow case', ShadowKeyPrice, "1293508920_0", "d237e8e89ac6173e7335f76e33e8afbd", true);
+
+    }else if (item.i_classid == '384801319' && item.ui_price < PhoenixPrice){
+
+        buyItem('phoenix case', PhoenixPrice, "384801319_0", "24b506a9f9a4ba7f5cc559beaa2f52db", true);
+    }else if (item.i_classid == '926978479' && item.ui_price < Croma2CasePrice){
+
+        buyItem('croma 2 case', Croma2CasePrice, "926978479_0", "7e3f6d929be4fde9184e3fa3fd06f5f5", true);
+    }else if (item.i_classid == '991959905' && item.ui_price < FalchionCasePrice){
+
+        buyItem('auto falshion case', FalchionCasePrice, "991959905_0", "1a46f82e75779d8e97f9875b71ba2ae1", true);
+    }
+
+
+
+});
 
 
 
@@ -104,7 +164,7 @@ Buy Ok, Store data!
 
 wsRegisterHandler("additem_go", function(item) {
 
-    console.log("New Item in inventory " + item.ui_id);
+    console.log("New Item in inventory " + item.i_name);
 
     var sql = 'update `csgotm_sales` set `name` = "'+item.i_name+'", `price` = '+item.ui_price+', `status` = 1 ' +
         ' where id_csgo = '+item.ui_id;
@@ -112,7 +172,7 @@ wsRegisterHandler("additem_go", function(item) {
     setTimeout(function() {
         connection.query(sql, function (error, results, fields) {
                 if (!error){
-                    console.log("Store info complete " + item.ui_id);
+                    console.log("Store info complete " + item.i_name + ' ' + item.ui_price);
                 }else{
                     console.log("error store info" + item.ui_id);
                 }
@@ -138,6 +198,7 @@ wsRegisterHandler("itemstatus_go", function(item) {
                 //{"result":"ok","id":"16159858"}
             } catch (e) {
                 wsDoLog('This doesn\'t look like a valid JSON: '+body);
+                return;
             }
 
             console.log("Retrive item response: "+item.id);
@@ -233,6 +294,7 @@ function retriveItem(id_item, ui_bid){
             var json = JSON.parse(body);
         } catch (e) {
             wsDoLog('This doesn\'t look like a valid JSON: '+body);
+            return true;
         }
 
         console.log("Retrive item response: "+id_item);
@@ -262,63 +324,42 @@ function retriveItem(id_item, ui_bid){
 }
 
 
-function buyShadowCase(){
 
-    var url = "https://csgo.tm/api/Buy/1293508920_0/"+(ShadowKeyPrice * 100)+"/d237e8e89ac6173e7335f76e33e8afbd/?key="+config.apiKey;
-    console.log(url);
 
-    console.log("Request buy shadow case max price " + ShadowKeyPrice);
+
+function buyItem( name, price, inst, hash, setTrading){
+
+    var url = "https://csgo.tm/api/Buy/"+inst+"/"+(price * 100)+"/"+hash+"/?key="+config.apiKey;
+
+    console.log("Request buy "+name+": " + price);
+
+    if (setTrading)
+        trading[inst] = true;
+
     request(url, function (error, response, body) {
 
         try {
             var json = JSON.parse(body);
             if (json.id != false){
-                console.log("Buy Ok, Store data!");
+                console.log("Buy Ok");
                 addCsgoItem(0, json.id, '', 0, 0, '');
             }else{
                 console.log(json.result);
-                trading = true;
+                trading[inst] = true;
             }
 
         } catch (e) {
             wsDoLog('This doesn\'t look like a valid JSON: '+body);
         }
+
+        if (setTrading)
+            trading[inst] = false;
+
     });
+
+
 }
 
-
-
-wsRegisterHandler("newitem", function(item) {
-    if (item.i_market_hash_name == 'Shadow Case' && item.i_classid == '1293508920' && item.ui_price < ShadowKeyPrice){
-
-        var url = "https://csgo.tm/api/Buy/1293508920_0/"+(ShadowKeyPrice * 100)+"/d237e8e89ac6173e7335f76e33e8afbd/?key="+config.apiKey;
-        console.log(url);
-
-        console.log("Request buy shadow case: " + item.ui_price);
-        trading = true;
-        request(url, function (error, response, body) {
-
-            try {
-                var json = JSON.parse(body);
-                if (json.id != false){
-                    console.log("Buy Ok, Store data!");
-                    addCsgoItem(0, json.id, '', 0, 0, '');
-                }else{
-                    console.log(json.result);
-                }
-
-            } catch (e) {
-                wsDoLog('This doesn\'t look like a valid JSON: '+body);
-            }
-            trading = false;
-        });
-
-        //
-
-
-    }
-
-});
 
 function wsIsConnected() {
     return ws_connected;
