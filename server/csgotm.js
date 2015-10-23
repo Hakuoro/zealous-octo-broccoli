@@ -32,11 +32,13 @@ trading["1293508920_0"] = false;
 trading["384801319_0"] = false;
 trading["926978479_0"] = false;
 trading["991959905_0"] = false;
+trading["720268538_0"] = false;
 
 
-var ShadowKeyPrice = 25;
+var ShadowKeyPrice = 23.5;
 var PhoenixPrice = 0.71;
-var Croma2CasePrice = 2;
+var Croma2CasePrice = 1.7;
+var CromaCasePrice = 1.3;
 var FalchionCasePrice = 0.71;
 
 wsSubscribe("auth:82118763.1444641436.17701e21f5a9510117f4a0c02497103c35653436");
@@ -74,11 +76,11 @@ function sleep(time, callback) {
 setInterval(function() {
 
     if (!trading["1293508920_0"]) {
-        buyItem('auto shadow case', ShadowKeyPrice, "1293508920_0", "d237e8e89ac6173e7335f76e33e8afbd", false);
+        //buyItem('auto shadow case', ShadowKeyPrice, "1293508920_0", "d237e8e89ac6173e7335f76e33e8afbd", false);
     }
 
 
-    sleep.usleep(1000000);
+    /*sleep.usleep(1000000);
     if (!trading["926978479_0"]) {
         buyItem('auto croma 2 case', Croma2CasePrice, "926978479_0", "7e3f6d929be4fde9184e3fa3fd06f5f5", false);
     }
@@ -92,9 +94,12 @@ setInterval(function() {
     sleep.usleep(1000000);
     if (!trading["991959905_0"]) {
         buyItem('auto falshion case', FalchionCasePrice, "991959905_0", "1a46f82e75779d8e97f9875b71ba2ae1", false);
+    }*/
+
+    sleep.usleep(1000000);
+    if (!trading["720268538_0"]) {
+        //buyItem('auto Chroma Case', CromaCasePrice, "720268538_0", "87f2ab5b83b460193a1253e9048921fb", false);
     }
-
-
 
 
 }, 5000);
@@ -106,17 +111,20 @@ setInterval(function() {
 wsRegisterHandler("newitem", function(item) {
     if (item.i_classid == '1293508920' && item.ui_price < ShadowKeyPrice){
 
-        buyItem('shadow case', ShadowKeyPrice, "1293508920_0", "d237e8e89ac6173e7335f76e33e8afbd", true);
+        //buyItem('shadow case', ShadowKeyPrice, "1293508920_0", "d237e8e89ac6173e7335f76e33e8afbd", true);
 
     }else if (item.i_classid == '384801319' && item.ui_price < PhoenixPrice){
 
-        buyItem('phoenix case', PhoenixPrice, "384801319_0", "24b506a9f9a4ba7f5cc559beaa2f52db", true);
+       // buyItem('phoenix case', PhoenixPrice, "384801319_0", "24b506a9f9a4ba7f5cc559beaa2f52db", true);
     }else if (item.i_classid == '926978479' && item.ui_price < Croma2CasePrice){
 
-        buyItem('croma 2 case', Croma2CasePrice, "926978479_0", "7e3f6d929be4fde9184e3fa3fd06f5f5", true);
+      //  buyItem('croma 2 case', Croma2CasePrice, "926978479_0", "7e3f6d929be4fde9184e3fa3fd06f5f5", true);
     }else if (item.i_classid == '991959905' && item.ui_price < FalchionCasePrice){
 
-        buyItem('auto falshion case', FalchionCasePrice, "991959905_0", "1a46f82e75779d8e97f9875b71ba2ae1", true);
+       // buyItem('auto falshion case', FalchionCasePrice, "991959905_0", "1a46f82e75779d8e97f9875b71ba2ae1", true);
+    }else if (item.i_classid == '720268538' && item.ui_price < FalchionCasePrice){
+
+       // buyItem('auto croma case', CromaCasePrice, "720268538_0", "87f2ab5b83b460193a1253e9048921fb", true);
     }
 
 
@@ -345,7 +353,7 @@ function buyItem( name, price, inst, hash, setTrading){
                 addCsgoItem(0, json.id, '', 0, 0, '');
             }else{
                 console.log(json.result);
-                trading[inst] = true;
+                //trading[inst] = true;
             }
 
         } catch (e) {
