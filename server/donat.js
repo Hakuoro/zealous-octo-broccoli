@@ -5,8 +5,33 @@ var SteamWebLogOn = require('steam-weblogon');
 var getSteamAPIKey = require('steam-web-api-key');
 var SteamTradeOffers = require('steam-tradeoffers');
 
+var mysql       = require('mysql');
+
 // Put your 64-bit SteamID here so the bot can accept your offers
 var configPath = process.argv[2] || process.env.APP_CONFIG_PATH || './bot.conf.json';
+
+var dbConfPath = process.argv[3] || './db.conf.json';
+var dbConf = require(dbConfPath);
+
+
+var connection = mysql.createConnection({
+    host     : dbConf.host,
+    user     : dbConf.user,
+    password : dbConf.password,
+    database : dbConf.database
+});
+
+
+connection.connect(function(err){
+    if(!err) {
+        connected = true;
+        console.log("Database is connected ... \n\n");
+    } else {
+        console.log("Error connecting database ... \n\n");
+    }
+});
+
+
 
 /**
  *  метрика подключения ботов
@@ -187,6 +212,39 @@ function handleOffers() {
                 }
 
                 log(offerMessage);
+                //console.log(offer.items_to_receive);
+                /*[ { appid: '730',
+                    contextid: '2',
+                    assetid: '3960173990',
+                    classid: '926978479',
+                    instanceid: '0',
+                    amount: '1',
+                    missing: false } ]*/
+
+
+
+
+                //console.log(offer.items_to_give);
+
+                /***
+                 * [ { appid: '730',
+                    contextid: '2',
+                    assetid: '3959029679',
+                    classid: '384801319',
+                    instanceid: '0',
+                    amount: '1',
+                    missing: false },
+                 { appid: '730',
+                   contextid: '2',
+                   assetid: '3959029631',
+                   classid: '384801319',
+                   instanceid: '0',
+                   amount: '1',
+                   missing: false },
+                 ]
+
+                 *
+                 */
 
                 if (!offer.items_to_give) {
                     offers.acceptOffer({
@@ -216,6 +274,104 @@ function handleOffers() {
                                     if (error) {
                                         return log(error);
                                     }
+
+                                   // console.log(result);
+                                   /* [ Object {
+                                        id: '3960842424',
+                                        owner: '76561198042384491',
+                                        classid: '991959905',
+                                        instanceid: '0',
+                                        icon_url: '-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXU5A1PIYQNqhpOSV-fRPasw8rsUFJ5KBFZv668FF8ugPDMIWpAuIq1w4KIlaChZOyFwzgJuZNy3-2T89T0jlC2rhZla2vwIJjVLFHz75yKpg',
+                                        icon_drag_url: '',
+                                        name: 'Falchion Case',
+                                        market_hash_name: 'Falchion Case',
+                                        market_name: 'Falchion Case',
+                                        name_color: 'D2D2D2',
+                                        background_color: '',
+                                        type: 'Base Grade Container',
+                                        tradable: 1,
+                                        marketable: 1,
+                                        commodity: 1,
+                                        market_tradable_restriction: '7',
+                                        descriptions:
+                                            Array [
+                                                [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object] ],
+                                        owner_descriptions: '',
+                                        tags: Array [ [Object], [Object], [Object], [Object] ],
+                                        pos: 1,
+                                        appid: 730,
+                                        contextid: 2,
+                                        amount: 1,
+                                        is_stackable: false },
+                                        Object {
+                                        id: '3960842480',
+                                        owner: '76561198042384491',
+                                        classid: '384801319',
+                                        instanceid: '0',
+                                        icon_url: '-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXU5A1PIYQNqhpOSV-fRPasw8rsUFJ5KBFZv668FFUuh6qZJmlD7tiyl4OIlaGhYuLTzjhVupJ12urH89ii3lHlqEdoMDr2I5jVLFFSv_J2Rg',
+                                        icon_drag_url: '',
+                                        name: 'Operation Phoenix Weapon Case',
+                                        market_hash_name: 'Operation Phoenix Weapon Case',
+                                        market_name: 'Operation Phoenix Weapon Case',
+                                        name_color: 'D2D2D2',
+                                        background_color: '',
+                                        type: 'Base Grade Container',
+                                        tradable: 1,
+                                        marketable: 1,
+                                        commodity: 1,
+                                        market_tradable_restriction: '7',
+                                        descriptions:
+                                            Array [
+                                                [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object],
+                                                    [Object] ],
+                                        owner_descriptions: '',
+                                        tags: Array [ [Object], [Object], [Object], [Object] ],
+                                        pos: 2,
+                                        appid: 730,
+                                        contextid: 2,
+                                        amount: 1,
+                                        is_stackable: false } ]*/
+
 
                                     var items = 'Got items:\n' +
                                         result.map(function (item) {

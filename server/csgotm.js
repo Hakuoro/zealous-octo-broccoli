@@ -25,19 +25,25 @@ var ws_unsupported_error_reported = false;
 var ws_auth_errors = 0;
 var ws_connection_type = 1;
 var connected = false;
+
 var trading = {} ;
-
-
 trading["1293508920_0"] = false;
 trading["384801319_0"] = false;
 trading["926978479_0"] = false;
 trading["991959905_0"] = false;
 trading["720268538_0"] = false;
 
+const ITEM_BOUGHT = 1;
+const ITEM_WAITING_PICKUP = 2;
+const ITEM_ON_CSTM_BOT = 3;
+const ITEM_RETRIVING = 4;
+const ITEM_SEND_TRADE = 5;
+const ITEM_ON_OUR_BOT = 6;
+
 
 var ShadowKeyPrice = 23.5;
-var PhoenixPrice = 0.71;
-var Croma2CasePrice = 1.7;
+var PhoenixPrice = 1.7;
+var Croma2CasePrice = 2;
 var CromaCasePrice = 1.3;
 var FalchionCasePrice = 0.71;
 
@@ -65,22 +71,16 @@ connection.connect(function(err){
     }
 });
 
-function sleep(time, callback) {
-    var stop = new Date().getTime();
-    while(new Date().getTime() < stop + time) {
-        ;
-    }
-    callback();
-}
+
 
 setInterval(function() {
 
-    if (!trading["1293508920_0"]) {
+    /*if (!trading["1293508920_0"]) {
         //buyItem('auto shadow case', ShadowKeyPrice, "1293508920_0", "d237e8e89ac6173e7335f76e33e8afbd", false);
-    }
+    }*/
 
 
-    /*sleep.usleep(1000000);
+    //sleep.usleep(1000000);
     if (!trading["926978479_0"]) {
         buyItem('auto croma 2 case', Croma2CasePrice, "926978479_0", "7e3f6d929be4fde9184e3fa3fd06f5f5", false);
     }
@@ -88,25 +88,32 @@ setInterval(function() {
 
     sleep.usleep(1000000);
     if (!trading["384801319_0"]) {
-        buyItem('auto phoenix case', PhoenixPrice, "384801319_0", "24b506a9f9a4ba7f5cc559beaa2f52db", false);
+       // buyItem('auto phoenix case', PhoenixPrice, "384801319_0", "24b506a9f9a4ba7f5cc559beaa2f52db", false);
     }
-
+/*
     sleep.usleep(1000000);
     if (!trading["991959905_0"]) {
         buyItem('auto falshion case', FalchionCasePrice, "991959905_0", "1a46f82e75779d8e97f9875b71ba2ae1", false);
     }*/
 
-    sleep.usleep(1000000);
+  /*  sleep.usleep(1000000);
     if (!trading["720268538_0"]) {
         //buyItem('auto Chroma Case', CromaCasePrice, "720268538_0", "87f2ab5b83b460193a1253e9048921fb", false);
     }
-
+*/
 
 }, 5000);
 
 setInterval(function() {
-    checkRetriveItems();
-}, 20000);
+    checkRetriveItemsFromCstm();
+}, 5000);
+
+
+setInterval(function() {
+    retriveItems();
+}, 1000);
+
+
 
 wsRegisterHandler("newitem", function(item) {
     if (item.i_classid == '1293508920' && item.ui_price < ShadowKeyPrice){
@@ -115,10 +122,10 @@ wsRegisterHandler("newitem", function(item) {
 
     }else if (item.i_classid == '384801319' && item.ui_price < PhoenixPrice){
 
-       // buyItem('phoenix case', PhoenixPrice, "384801319_0", "24b506a9f9a4ba7f5cc559beaa2f52db", true);
+        //buyItem('phoenix case', PhoenixPrice, "384801319_0", "24b506a9f9a4ba7f5cc559beaa2f52db", true);
     }else if (item.i_classid == '926978479' && item.ui_price < Croma2CasePrice){
 
-      //  buyItem('croma 2 case', Croma2CasePrice, "926978479_0", "7e3f6d929be4fde9184e3fa3fd06f5f5", true);
+        buyItem('croma 2 case', Croma2CasePrice, "926978479_0", "7e3f6d929be4fde9184e3fa3fd06f5f5", true);
     }else if (item.i_classid == '991959905' && item.ui_price < FalchionCasePrice){
 
        // buyItem('auto falshion case', FalchionCasePrice, "991959905_0", "1a46f82e75779d8e97f9875b71ba2ae1", true);
@@ -127,58 +134,40 @@ wsRegisterHandler("newitem", function(item) {
        // buyItem('auto croma case', CromaCasePrice, "720268538_0", "87f2ab5b83b460193a1253e9048921fb", true);
     }
 
-
-
 });
 
 
+function addCsgoItem(id, id_csgo, name, price, status, message, bid){
 
-//additem_go - добавление предмета на странице sell.
-//    itemout_new_go - Исчезание предмета на странице sell.
-//    itemstatus_go - Изменение статуса предмета на странице sell.
+    var sql = 'INSERT IGNORE INTO csgotm_sales (`id_csgo`, `name`, `price`, `status`, `message`, `bid`) ' +
+        'VALUES (?, ?, ?, ?, ?, ?)';
 
-/*https://csgo.tm/api/ItemRequest/[in_or_out]/[botid]/?key=[your_secret_key] - Отправка оффлайн трейда от нашего бота вам.
 
-    [in_or_out] = Отправляем "out", если хотим вывести купленную вещь, "in" - если хотим передать боту продаваемую вещь.
-    [botid] - При выводе купленной вещи, вы можете посмотреть этот id в свойствах предмета со страницы sell (api /Trades/)
-    [botid] = 1 - При передаче продаваемой вещи нашему боту, вместо [botid] передайте просто "1"
-*/
-
-function addCsgoItem(id, id_csgo, name, price, status, message){
-
-    var sql = 'INSERT INTO csgotm_sales (`id_csgo`, `name`, `price`, `status`, `message`) ' +
-        'VALUES (?, ?, ?, ?, ?)';
-
-        connection.query({
-                sql: sql
-            },
-            [id_csgo, name, price, status, message],
-            function (error, results, fields) {
-                if (!error){
-                    console.log("adding item complete " + id_csgo);
-                }else{
-                    console.log("error adding item" + id_csgo);
-                }
+    connection.query({
+            sql: sql
+        },
+        [id_csgo, name, price, status, message, bid],
+        function (error, results, fields) {
+            if (error){
+                console.log("error adding item" + id_csgo);
+                console.log(error);
             }
-        );
+        }
+    );
 }
-/*
-New Item in inventory 16200363
-Store info complete 16200363
-Buy Ok, Store data!
-    adding item complete 16200363
-*/
-
 
 wsRegisterHandler("additem_go", function(item) {
 
     console.log("New Item in inventory " + item.i_name);
 
-    var sql = 'update `csgotm_sales` set `name` = "'+item.i_name+'", `price` = '+item.ui_price+', `status` = 1 ' +
-        ' where id_csgo = '+item.ui_id;
+    var sql = 'update `csgotm_sales` set `name` = ?, `price` = ?, `status` = ? where id_csgo = ?';
 
     setTimeout(function() {
-        connection.query(sql, function (error, results, fields) {
+        connection.query({
+                sql: sql
+            },
+            [item.i_name, item.ui_price, ITEM_WAITING_PICKUP, item.ui_id],
+            function (error, results, fields) {
                 if (!error){
                     console.log("Store info complete " + item.i_name + ' ' + item.ui_price);
                 }else{
@@ -186,57 +175,22 @@ wsRegisterHandler("additem_go", function(item) {
                 }
             }
         );
-
     }, 8000);
 });
 
 
 wsRegisterHandler("itemstatus_go", function(item) {
+    //console.log(item);
     console.log("Status Changed " + item.id + " Status "+item.status);
 
     if (item.status == 4 ){
-        var url = "https://csgo.tm/api/ItemRequest/out/"+item.bid+"/?key="+config.apiKey;
+        //{ id: '17860658', status: 4, bid: '237506082', left: 14400 }
 
-        console.log("Retrive item "+item.id);
-
-        request(url, function (error, response, body) {
-
-            try {
-                var json = JSON.parse(body);
-                //{"result":"ok","id":"16159858"}
-            } catch (e) {
-                wsDoLog('This doesn\'t look like a valid JSON: '+body);
-                return;
-            }
-
-            console.log("Retrive item response: "+item.id);
-            if (json.success == true){
-
-                var sql = 'update csgotm_sales set `message` = ?' +
-                    ' where id_csgo = ?';
-
-                connection.query({
-                        sql: sql
-                    },
-                    [json.secret, item.id],
-                    function (error, results, fields) {
-                        if (!error){
-                        }else{
-                            console.log(sql);
-                            console.log(error);
-                        }
-                    }
-                );
-
-                console.log("Retrive ok "+item.id)
-
-            }else{
-                console.log(json.error);
-            }
-        });
+        setBidById(item.id, item.bid);
 
     }else if (item.status == 5 ){
-        var sql = 'update csgotm_sales set `status` = 2' +
+        //{ id: '17860658', status: 5 }
+        /*var sql = 'update csgotm_sales set `status` = ?' +
             ' where id_csgo = ?';
         connection.query({
                 sql: sql
@@ -251,70 +205,96 @@ wsRegisterHandler("itemstatus_go", function(item) {
                     console.log(error);
                 }
             }
-        )
+        )*/
     }
 
 });
 
-function checkRetriveItems(){
+
+function checkRetriveItemsFromCstm(){
 
 
     var url = "https://csgo.tm/api/Trades/?key="+config.apiKey;
 
+    console.log('check retrived');
     request(url, function (error, response, body) {
 
         try {
             var json = JSON.parse(body);
             //{"result":"ok","id":"16159858"}
         } catch (e) {
-            wsDoLog('This doesn\'t look like a valid JSON: '+body);
+            wsDoLog('This doesn\'t look like a valid JSON555: '+body);
         }
+        json.some(function (item, index, array) {
 
-        var id_item = 0, ui_bid = 0;
-
-        json.every(function(item) {
             if (item.ui_status == 4) {
-                id_item = item.ui_id;
-                ui_bid = item.ui_bid;
-                return false;
+                insertBid(item);
             }
-            return true;
+
+            return false;
         });
-
-
-        if (id_item > 0){
-            retriveItem(id_item, ui_bid);
-        }
 
     });
 }
 
-function retriveItem(id_item, ui_bid){
 
+function insertBid(item){
+
+    connection.query({
+            sql: 'select * from csgotm_sales where id_csgo = ? '
+        },
+        [item.ui_id],
+        function (error, results, fields) {
+            if (error){
+                console.log(error);
+            }else{
+                if (results.length == 0) {
+                    // пытаемся добавить вещь, если она по стечению обстоятельст не появилась в нашей базе
+                    addCsgoItem(0, item.ui_id, item.i_market_hash_name, item.ui_price, ITEM_ON_CSTM_BOT, '', item.ui_bid);
+                }else if (results[0].status <= ITEM_ON_CSTM_BOT){
+                    connection.query({
+                            sql: 'update csgotm_sales set bid = ?, status = ?, price= ?, name = ?, purchase_time = NOW()' +
+                            ' where id_csgo = ? and status <> ?'
+                        },
+                        [item.ui_bid, ITEM_ON_CSTM_BOT, item.ui_price, item.i_market_hash_name, item.ui_id, ITEM_ON_CSTM_BOT],
+                        function (error, results, fields) {
+                            if (error){
+                                console.log(sql);
+                                console.log(error);
+                            }
+
+                        }
+                    );
+
+                }
+            }
+        }
+    );
+}
+
+function retriveItem(ui_bid){
 
     var url = "https://csgo.tm/api/ItemRequest/out/"+ui_bid+"/?key="+config.apiKey;
 
-    console.log("Auto Retrive item "+id_item);
-
+    console.log('retrive item ' + ui_bid);
     request(url, function (error, response, body) {
 
         try {
             var json = JSON.parse(body);
         } catch (e) {
-            wsDoLog('This doesn\'t look like a valid JSON: '+body);
+            wsDoLog('This doesn\'t look like a valid JSON666: '+body);
             return true;
         }
 
-        console.log("Retrive item response: "+id_item);
         if (json.success == true){
 
-            var sql = 'update csgotm_sales set `message` = ?' +
-                ' where id_csgo = ?';
+            var sql = 'update csgotm_sales set `message` = ?, status = ?' +
+                ' where bid = ?';
 
             connection.query({
                     sql: sql
                 },
-                [json.secret, id_item],
+                [json.secret, ITEM_SEND_TRADE, ui_bid],
                 function (error, results, fields) {
                     if (!error){
                     }else{
@@ -324,15 +304,70 @@ function retriveItem(id_item, ui_bid){
                 }
             );
 
-            console.log("Retrive ok "+id_item)
+            console.log("Retrive ok "+ui_bid)
         }else{
             console.log(json.error);
+            setStatusByBid(ui_bid,ITEM_ON_CSTM_BOT);
         }
     });
 }
 
+function retriveItems(){
 
+    var sql = 'select bid from (select * from csgotm_sales where status = ? and purchase_time < NOW() - INTERVAL 30 SECOND ' +
+        'and (bid> 0  or bid is not null)) as t1 group by bid';
+    connection.query({
+            sql: sql
+        },
+        [ITEM_ON_CSTM_BOT],
+        function (error, results, fields) {
+            if (error){
+                console.log(error);
+            }else{
+                if (results.length > 0) {
+                    results.forEach(function (item, index) {
 
+                        setStatusByBid(item.bid,ITEM_RETRIVING);
+                        setTimeout(function(){retriveItem(item.bid)}, index*15000);
+                    });
+                }
+            }
+        }
+    );
+
+}
+
+function setBidById(id, bid){
+    connection.query({
+            sql:'update csgotm_sales set bid=?, status = ? where id_csgo = ?'
+        },
+        [bid, ITEM_ON_CSTM_BOT, id],
+        function (error, results, fields) {
+            if (!error){
+                console.log('bid set '+id);
+            }else{
+                console.log(sql);
+                console.log(error);
+            }
+        }
+    );
+}
+
+function setStatusByBid(bid, status){
+    connection.query({
+            sql:'update csgotm_sales set status = ? where bid = ?'
+        },
+        [status, bid],
+        function (error, results, fields) {
+            if (!error){
+                console.log('status set '+bid+' '+status);
+            }else{
+                console.log(sql);
+                console.log(error);
+            }
+        }
+    );
+}
 
 
 function buyItem( name, price, inst, hash, setTrading){
@@ -350,14 +385,14 @@ function buyItem( name, price, inst, hash, setTrading){
             var json = JSON.parse(body);
             if (json.id != false){
                 console.log("Buy Ok");
-                addCsgoItem(0, json.id, '', 0, 0, '');
+                addCsgoItem(0, json.id, '', '', ITEM_BOUGHT, '', 0);
             }else{
                 console.log(json.result);
                 //trading[inst] = true;
             }
 
         } catch (e) {
-            wsDoLog('This doesn\'t look like a valid JSON: '+body);
+            wsDoLog('This doesn\'t look like a valid JSON111: '+body + ' '+e.message);
         }
 
         if (setTrading)
@@ -368,7 +403,7 @@ function buyItem( name, price, inst, hash, setTrading){
 
 }
 
-
+/*********************************************************************************************************************/
 function wsIsConnected() {
     return ws_connected;
 }
@@ -464,7 +499,7 @@ function wsSyncConnect() {
                     } else
                         wsDoLog('Server did not respond with auth token: '+json);
                 } catch (e) {
-                    wsDoLog('Requested token doesn\'t look like a valid JSON: '+json);
+                    wsDoLog('Requested token doesn\'t look like a valid JSON222: '+json);
                 }
             });
 
@@ -476,14 +511,14 @@ function wsSyncConnect() {
         try {
             var json = JSON.parse(message.data);
         } catch (e) {
-            wsDoLog('This doesn\'t look like a valid JSON: '+message.data);
+            wsDoLog('This doesn\'t look like a valid JSON333: '+message.data);
             return;
         }
 
         try {
             var data = JSON.parse(json.data);
         } catch (e) {
-            wsDoLog('This doesn\'t look like a valid JSON: '+json.data);
+            wsDoLog('This doesn\'t look like a valid JSON444: '+json.data);
             return;
         }
 
