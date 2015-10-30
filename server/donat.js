@@ -52,7 +52,7 @@ var authCode = '2P9QG'; // Code received by email
  *  включена ли отдача предметов
  * @type {boolean}
  */
-var give = false;
+var give = true;
 
 /**
  *  список ботов которым разрешено отдавать предметы
