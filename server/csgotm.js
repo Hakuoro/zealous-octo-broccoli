@@ -41,9 +41,9 @@ const ITEM_SEND_TRADE = 5;
 const ITEM_ON_OUR_BOT = 6;
 
 
-var ShadowCasePrice = 17.1;
-var PhoenixPrice = 1.51;
-var Croma2CasePrice = 1.51;
+var ShadowCasePrice = 18.1;
+var PhoenixPrice = 1.61;
+var Croma2CasePrice = 1.61;
 var CromaCasePrice = 1.3;
 var FalchionCasePrice = 1.51;
 
@@ -76,31 +76,31 @@ connection.connect(function(err){
 setInterval(function() {
 
     if (!trading["1293508920_0"]) {
-     //   buyItem('auto shadow case', ShadowCasePrice, "1293508920_0", "7c81317145bd2b86d3c51250ac9f6c9e", false);
+      //  buyItem('auto shadow case', ShadowCasePrice, "1293508920_0", "7c81317145bd2b86d3c51250ac9f6c9e", false);
     }
 
 
     sleep.usleep(1000000);
     if (!trading["926978479_0"]) {
-     //   buyItem('auto croma 2 case', Croma2CasePrice, "926978479_0", "7e3f6d929be4fde9184e3fa3fd06f5f5", false);
+      //  buyItem('auto croma 2 case', Croma2CasePrice, "926978479_0", "7e3f6d929be4fde9184e3fa3fd06f5f5", false);
     }
 
 
-    sleep.usleep(1000000);
+    //sleep.usleep(1000000);
     if (!trading["384801319_0"]) {
-       // buyItem('auto phoenix case', PhoenixPrice, "384801319_0", "24b506a9f9a4ba7f5cc559beaa2f52db", false);
+        buyItem('auto phoenix case', PhoenixPrice, "384801319_0", "24b506a9f9a4ba7f5cc559beaa2f52db", false);
     }
 
-    sleep.usleep(1000000);
+  //  sleep.usleep(1000000);
     if (!trading["991959905_0"]) {
       //  buyItem('auto falshion case', FalchionCasePrice, "991959905_0", "1a46f82e75779d8e97f9875b71ba2ae1", false);
     }
 
-  /*  sleep.usleep(1000000);
+   sleep.usleep(1000000);
     if (!trading["720268538_0"]) {
-        //buyItem('auto Chroma Case', CromaCasePrice, "720268538_0", "87f2ab5b83b460193a1253e9048921fb", false);
+        buyItem('auto Chroma Case', CromaCasePrice, "720268538_0", "87f2ab5b83b460193a1253e9048921fb", false);
     }
-*/
+
 
 }, 5000);
 
@@ -109,20 +109,20 @@ setInterval(function() {
 wsRegisterHandler("newitem", function(item) {
     if (item.i_classid == '1293508920' && item.ui_price < ShadowCasePrice){
 
-       // buyItem('shadow case', ShadowCasePrice, "1293508920_0", "7c81317145bd2b86d3c51250ac9f6c9e", true);
+     //   buyItem('shadow case', ShadowCasePrice, "1293508920_0", "7c81317145bd2b86d3c51250ac9f6c9e", true);
 
     }else if (item.i_classid == '384801319' && item.ui_price < PhoenixPrice){
 
-        //buyItem('phoenix case', PhoenixPrice, "384801319_0", "24b506a9f9a4ba7f5cc559beaa2f52db", true);
+        buyItem('phoenix case', PhoenixPrice, "384801319_0", "24b506a9f9a4ba7f5cc559beaa2f52db", true);
     }else if (item.i_classid == '926978479' && item.ui_price < Croma2CasePrice){
 
-      //  buyItem('croma 2 case', Croma2CasePrice, "926978479_0", "7e3f6d929be4fde9184e3fa3fd06f5f5", true);
+    //    buyItem('croma 2 case', Croma2CasePrice, "926978479_0", "7e3f6d929be4fde9184e3fa3fd06f5f5", true);
     }else if (item.i_classid == '991959905' && item.ui_price < FalchionCasePrice){
 
       //  buyItem('auto falshion case', FalchionCasePrice, "991959905_0", "1a46f82e75779d8e97f9875b71ba2ae1", true);
     }else if (item.i_classid == '720268538' && item.ui_price < FalchionCasePrice){
 
-       // buyItem('auto croma case', CromaCasePrice, "720268538_0", "87f2ab5b83b460193a1253e9048921fb", true);
+        buyItem('auto croma case', CromaCasePrice, "720268538_0", "87f2ab5b83b460193a1253e9048921fb", true);
     }
 
 });

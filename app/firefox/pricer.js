@@ -22,7 +22,7 @@ $( "#accordion" ).before(
     '<input type="button" id="iAdd1" value="Change val" style="color:#333"> <br/>'
 );
 
-var maxTry = 100;
+var maxTry = 999;
 var currentTry = 0;
 
 $('#iAdd1').click(function () {
@@ -34,10 +34,10 @@ $('#iAdd1').click(function () {
 
             if (name == $('#iName').val()){
                 var price = $(v).find('td:eq(1)').html().toString();
-                price = price.substring(0,price.indexOf(' '));
+                price = price.substring(0, price.indexOf(' '));
 
 
-                if (price > $('#iVal').val() && currentTry < maxTry){
+                if (price != $('#iVal').val() && currentTry < maxTry){
 
                     var link = $(v).find('td:eq(0) a').attr( "href" );
 
@@ -54,8 +54,10 @@ $('#iAdd1').click(function () {
                             csrf: g_CSRF
                         },
                         success: function (result) {
-                            console.log(currentTry + ' ' + itemId + ' ' + result);
-                        }});
+                            console.log(currentTry + ' '  + price +' '+$('#iVal').val() + ' '+ name + ' ' + result);
+
+                        }
+                    });
                     currentTry++;
                 }
 
