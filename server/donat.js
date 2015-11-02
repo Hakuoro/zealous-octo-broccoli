@@ -5,10 +5,19 @@ var SteamWebLogOn = require('steam-weblogon');
 var getSteamAPIKey = require('steam-web-api-key');
 var SteamTradeOffers = require('steam-tradeoffers');
 
+var Queue = require('bull');
+
 var mysql       = require('mysql');
 
 // Put your 64-bit SteamID here so the bot can accept your offers
-var configPath = process.argv[2] || process.env.APP_CONFIG_PATH || './bot.conf.json';
+
+var botName = process.argv[2] || 77;
+
+var botConfig = require('./bot.conf.json');
+
+
+
+
 
 var dbConfPath = process.argv[3] || './db.conf.json';
 var dbConf = require(dbConfPath);
@@ -32,12 +41,11 @@ connection.connect(function(err){
 });
 
 
-
 /**
  *  метрика подключения ботов
  * @type {*}
  */
-var logOnOptions = require(configPath);
+var logOnOptions = botConfig[botName]["logon"];
 
 
 var admin = "76561198042384491";
@@ -52,7 +60,7 @@ var authCode = '2P9QG'; // Code received by email
  *  включена ли отдача предметов
  * @type {boolean}
  */
-var give = true;
+var give = botConfig[botName]['config']["give"];
 
 /**
  *  список ботов которым разрешено отдавать предметы
@@ -67,8 +75,61 @@ var bots = {};
 var botIdsFile = './opskins.bot';
 
 
+function reloadConfig(id){
 
-var sentryFileName = 'sentry77'; // steam guard data file name
+    if (connected) {
+        connection.query({
+                sql: 'SELECT config FROM bot_config where id_bot = ?'
+            },
+            [id],
+            function (error, results, fields) {
+                if (!error) {
+                    try {
+                        var config = JSON.parse(results[0].config);
+                        //{"result":"ok","id":"16159858"}
+                    } catch (e) {
+                        wsDoLog('This doesn\'t look like a valid JSON555: ' + body);
+                        return;
+                    }
+                    give = config.give;
+                } else {
+                    console.log(error);
+                }
+            }
+        );
+    }
+
+}
+
+setInterval(function() {
+    reloadConfig(botName);
+}, 10000);
+
+
+/*
+var itemsToTrade = botConfig[botName]["items"];
+
+var botQueue = Queue("bot"+botName, '6379', '127.0.0.1', {auth_pass: '5708Hakuoro!oroukaH8075'});
+
+var commandQueue = Queue("botCommand"+botName, '6379', '127.0.0.1', {auth_pass: '5708Hakuoro!oroukaH8075'});
+
+commandQueue.process(function(msg, done){
+    var type = msg.data.type;
+
+    if (type == 'status'){
+        botQueue.add({"give":give, "type":"status"});
+    }else if (type == 'set'){
+        give = msg.data.give;
+    }
+
+
+    console.log(give);
+    done();
+});
+*/
+
+
+var sentryFileName = 'sentry' + botName; // steam guard data file name
 
 try {
     logOnOptions.sha_sentryfile = getSHA1(fs.readFileSync(sentryFileName));
