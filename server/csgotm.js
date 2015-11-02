@@ -26,12 +26,12 @@ var ws_auth_errors = 0;
 var ws_connection_type = 1;
 var connected = false;
 
-var trading = {} ;
-trading["1293508920_0"] = false;
-trading["384801319_0"] = false;
-trading["926978479_0"] = false;
-trading["991959905_0"] = false;
-trading["720268538_0"] = false;
+var tradeConfig = {} ;
+tradeConfig["1293508920_0"] = {auto:true, trading:false};
+tradeConfig["384801319_0"] = {auto:true, trading:false};
+tradeConfig["926978479_0"] = {auto:true, trading:false};
+tradeConfig["991959905_0"] = {auto:true, trading:false};
+tradeConfig["720268538_0"] = {auto:true, trading:false};
 
 const ITEM_BOUGHT = 1;
 const ITEM_WAITING_PICKUP = 2;
@@ -75,54 +75,61 @@ connection.connect(function(err){
 
 setInterval(function() {
 
-    if (!trading["1293508920_0"]) {
-       // buyItem('auto shadow case', ShadowCasePrice, "1293508920_0", "7c81317145bd2b86d3c51250ac9f6c9e", false);
+    if (isAutoTrade("1293508920_0")) {
+       buyItem('auto shadow case', ShadowCasePrice, "1293508920_0", "7c81317145bd2b86d3c51250ac9f6c9e", false);
+    }
+
+    if (isAutoTrade("926978479_0")) {
+        sleep.usleep(1000000);
+        buyItem('auto croma 2 case', Croma2CasePrice, "926978479_0", "7e3f6d929be4fde9184e3fa3fd06f5f5", false);
     }
 
 
-    sleep.usleep(1000000);
-    if (!trading["926978479_0"]) {
-        //buyItem('auto croma 2 case', Croma2CasePrice, "926978479_0", "7e3f6d929be4fde9184e3fa3fd06f5f5", false);
+    if (isAutoTrade("384801319_0")) {
+        sleep.usleep(1000000);
+        buyItem('auto phoenix case', PhoenixPrice, "384801319_0", "24b506a9f9a4ba7f5cc559beaa2f52db", false);
     }
 
-
-    //sleep.usleep(1000000);
-    if (!trading["384801319_0"]) {
-      //  buyItem('auto phoenix case', PhoenixPrice, "384801319_0", "24b506a9f9a4ba7f5cc559beaa2f52db", false);
+    if (isAutoTrade("991959905_0")) {
+        sleep.usleep(1000000);
+        buyItem('auto falshion case', FalchionCasePrice, "991959905_0", "1a46f82e75779d8e97f9875b71ba2ae1", false);
     }
 
-  //  sleep.usleep(1000000);
-    if (!trading["991959905_0"]) {
-      //  buyItem('auto falshion case', FalchionCasePrice, "991959905_0", "1a46f82e75779d8e97f9875b71ba2ae1", false);
-    }
-
-   sleep.usleep(1000000);
-    if (!trading["720268538_0"]) {
-//        buyItem('auto Chroma Case', CromaCasePrice, "720268538_0", "87f2ab5b83b460193a1253e9048921fb", false);
+    if (isAutoTrade("720268538_0")) {
+        sleep.usleep(1000000);
+        buyItem('auto Chroma Case', CromaCasePrice, "720268538_0", "87f2ab5b83b460193a1253e9048921fb", false);
     }
 
 
 }, 5000);
 
 
+function isAutoTrade(id){
+    return tradeConfig[id].trading && tradeConfig[id].auto;
+}
+
+function isTrade(id){
+    return tradeConfig[id].trading;
+}
+
 
 wsRegisterHandler("newitem", function(item) {
-    if (item.i_classid == '1293508920' && item.ui_price < ShadowCasePrice){
+    if (item.i_classid == '1293508920' && item.ui_price < ShadowCasePrice && isTrade("1293508920_0")){
 
-     //   buyItem('shadow case', ShadowCasePrice, "1293508920_0", "7c81317145bd2b86d3c51250ac9f6c9e", true);
+        buyItem('shadow case', ShadowCasePrice, "1293508920_0", "7c81317145bd2b86d3c51250ac9f6c9e", true);
 
-    }else if (item.i_classid == '384801319' && item.ui_price < PhoenixPrice){
+    }else if (item.i_classid == '384801319' && item.ui_price < PhoenixPrice && isTrade("384801319_0")){
 
-       // buyItem('phoenix case', PhoenixPrice, "384801319_0", "24b506a9f9a4ba7f5cc559beaa2f52db", true);
-    }else if (item.i_classid == '926978479' && item.ui_price < Croma2CasePrice){
+        buyItem('phoenix case', PhoenixPrice, "384801319_0", "24b506a9f9a4ba7f5cc559beaa2f52db", true);
+    }else if (item.i_classid == '926978479' && item.ui_price < Croma2CasePrice && isTrade("926978479_0")){
 
-       // buyItem('croma 2 case', Croma2CasePrice, "926978479_0", "7e3f6d929be4fde9184e3fa3fd06f5f5", true);
-    }else if (item.i_classid == '991959905' && item.ui_price < FalchionCasePrice){
+        buyItem('croma 2 case', Croma2CasePrice, "926978479_0", "7e3f6d929be4fde9184e3fa3fd06f5f5", true);
+    }else if (item.i_classid == '991959905' && item.ui_price < FalchionCasePrice && isTrade("991959905_0")){
 
-      //  buyItem('auto falshion case', FalchionCasePrice, "991959905_0", "1a46f82e75779d8e97f9875b71ba2ae1", true);
-    }else if (item.i_classid == '720268538' && item.ui_price < FalchionCasePrice){
+        buyItem('auto falshion case', FalchionCasePrice, "991959905_0", "1a46f82e75779d8e97f9875b71ba2ae1", true);
+    }else if (item.i_classid == '720268538' && item.ui_price < FalchionCasePrice && isTrade("720268538_0")){
 
-        //buyItem('auto croma case', CromaCasePrice, "720268538_0", "87f2ab5b83b460193a1253e9048921fb", true);
+        buyItem('auto croma case', CromaCasePrice, "720268538_0", "87f2ab5b83b460193a1253e9048921fb", true);
     }
 
 });
@@ -137,6 +144,40 @@ setInterval(function() {
     retriveItems();
 }, 6000);
 */
+
+function reloadConfig(id){
+
+    if (connected) {
+        connection.query({
+                sql: 'SELECT config FROM bot_config where id_bot = ?'
+            },
+            [id],
+            function (error, results, fields) {
+                if (!error) {
+                    try {
+                        var config = JSON.parse(results[0].config);
+                        //{"result":"ok","id":"16159858"}
+                    } catch (e) {
+                        wsDoLog('This doesn\'t look like a valid JSON555: ' + body);
+                        return;
+                    }
+
+
+
+
+
+                } else {
+                    console.log(error);
+                }
+            }
+        );
+    }
+
+}
+
+setInterval(function() {
+    reloadConfig(botName);
+}, 10000);
 
 
 function addCsgoItem(id, id_csgo, name, price, status, message, bid){
@@ -423,8 +464,6 @@ function buyItem( name, price, inst, hash, setTrading){
 
     console.log("Request buy "+name+": " + price);
 
-    if (setTrading)
-        trading[inst] = true;
 
     request(url, function (error, response, body) {
 
@@ -433,11 +472,12 @@ function buyItem( name, price, inst, hash, setTrading){
             if (json.id != false){
                 console.log("Buy Ok");
                 addCsgoItem(0, json.id, '', '', ITEM_BOUGHT, '', 0);
+                tradeConfig[inst].auto = true; // включить авто покупку
             }else{
                 console.log(json.result);
                 if (json.result == 'К сожалению, предложение устарело. Обновите страницу') {
-                    console.log('stop trading '+inst);
-                    trading[inst] = true;
+                    console.log('stop tradeConfig '+inst);
+                    tradeConfig[inst].auto = false; // выключить авто покупку
                 }
             }
 
@@ -445,9 +485,6 @@ function buyItem( name, price, inst, hash, setTrading){
             wsDoLog('This doesn\'t look like a valid JSON111: '+body + ' '+e.message);
             return;
         }
-
-        if (setTrading)
-            trading[inst] = false;
 
     });
 
