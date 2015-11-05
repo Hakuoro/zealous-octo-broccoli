@@ -16,9 +16,6 @@ var botName = process.argv[2] || 77;
 var botConfig = require('./bot.conf.json');
 
 
-
-
-
 var dbConfPath = process.argv[3] || './db.conf.json';
 var dbConf = require(dbConfPath);
 
@@ -100,11 +97,11 @@ function reloadConfig(id){
     }
 
 }
-
+/*
 setInterval(function() {
     reloadConfig(botName);
 }, 10000);
-
+*/
 
 /*
 var itemsToTrade = botConfig[botName]["items"];

@@ -7,6 +7,8 @@ var configPath = process.argv[2] ||  './db.conf.json';
 
 var config = require(configPath);
 
+var botName = process.argv[2] || 77;
+
 var wsAddress = config.wsAddress;
 var wsAuthApi = config.wsAuthApi;
 var wsPath = config.wsPath;
@@ -27,11 +29,13 @@ var ws_connection_type = 1;
 var connected = false;
 
 var tradeConfig = {} ;
-tradeConfig["1293508920_0"] = {auto:true, trading:false};
-tradeConfig["384801319_0"] = {auto:true, trading:false};
-tradeConfig["926978479_0"] = {auto:true, trading:false};
-tradeConfig["991959905_0"] = {auto:true, trading:false};
-tradeConfig["720268538_0"] = {auto:true, trading:false};
+tradeConfig["1293508920_0"] = {trading:false, name:"shadow case", "price":15.1};
+tradeConfig["384801319_0"] = {trading:false, name:"phoenix case", "price":1.61};
+tradeConfig["926978479_0"] = {trading:false, name:"croma 2 case", "price":1.61};
+tradeConfig["991959905_0"] = {trading:false, name:"falshion case", "price":1.51};
+tradeConfig["720268538_0"] = {trading:false, name:"Chroma Case", "price":1.31};
+
+var autoTradeConfig = {} ;
 
 const ITEM_BOUGHT = 1;
 const ITEM_WAITING_PICKUP = 2;
@@ -66,6 +70,7 @@ connection.connect(function(err){
     if(!err) {
         connected = true;
         console.log("Database is connected ... \n\n");
+        reloadConfig(botName);
     } else {
         console.log("Error connecting database ... \n\n");
     }
@@ -76,28 +81,28 @@ connection.connect(function(err){
 setInterval(function() {
 
     if (isAutoTrade("1293508920_0")) {
-       buyItem('auto shadow case', ShadowCasePrice, "1293508920_0", "7c81317145bd2b86d3c51250ac9f6c9e", false);
+       buyItem('auto shadow case', tradeConfig["1293508920_0"].price, "1293508920_0", "b414995bf93f2458bf46e2ed37c8c223");
     }
 
     if (isAutoTrade("926978479_0")) {
         sleep.usleep(1000000);
-        buyItem('auto croma 2 case', Croma2CasePrice, "926978479_0", "7e3f6d929be4fde9184e3fa3fd06f5f5", false);
+        buyItem('auto croma 2 case', tradeConfig["926978479_0"].price, "926978479_0", "7e3f6d929be4fde9184e3fa3fd06f5f5");
     }
 
 
     if (isAutoTrade("384801319_0")) {
         sleep.usleep(1000000);
-        buyItem('auto phoenix case', PhoenixPrice, "384801319_0", "24b506a9f9a4ba7f5cc559beaa2f52db", false);
+        buyItem('auto phoenix case', tradeConfig["384801319_0"].price, "384801319_0", "24b506a9f9a4ba7f5cc559beaa2f52db");
     }
 
     if (isAutoTrade("991959905_0")) {
         sleep.usleep(1000000);
-        buyItem('auto falshion case', FalchionCasePrice, "991959905_0", "1a46f82e75779d8e97f9875b71ba2ae1", false);
+        buyItem('auto falshion case', tradeConfig["991959905_0"].price, "991959905_0", "1a46f82e75779d8e97f9875b71ba2ae1");
     }
 
     if (isAutoTrade("720268538_0")) {
         sleep.usleep(1000000);
-        buyItem('auto Chroma Case', CromaCasePrice, "720268538_0", "87f2ab5b83b460193a1253e9048921fb", false);
+        buyItem('auto Chroma Case', tradeConfig["720268538_0"].price, "720268538_0", "87f2ab5b83b460193a1253e9048921fb");
     }
 
 
@@ -105,7 +110,7 @@ setInterval(function() {
 
 
 function isAutoTrade(id){
-    return tradeConfig[id].trading && tradeConfig[id].auto;
+    return tradeConfig[id].trading && autoTradeConfig[id];
 }
 
 function isTrade(id){
@@ -114,22 +119,25 @@ function isTrade(id){
 
 
 wsRegisterHandler("newitem", function(item) {
-    if (item.i_classid == '1293508920' && item.ui_price < ShadowCasePrice && isTrade("1293508920_0")){
+    if (item.i_classid == '1293508920' && item.ui_price < tradeConfig["1293508920_0"].price && isTrade("1293508920_0")){
 
-        buyItem('shadow case', ShadowCasePrice, "1293508920_0", "7c81317145bd2b86d3c51250ac9f6c9e", true);
+        buyItem('auto shadow case', tradeConfig["1293508920_0"].price, "1293508920_0", "b414995bf93f2458bf46e2ed37c8c223");
 
-    }else if (item.i_classid == '384801319' && item.ui_price < PhoenixPrice && isTrade("384801319_0")){
+    }else if (item.i_classid == '384801319' && item.ui_price < tradeConfig["384801319_0"].price && isTrade("384801319_0")){
 
-        buyItem('phoenix case', PhoenixPrice, "384801319_0", "24b506a9f9a4ba7f5cc559beaa2f52db", true);
-    }else if (item.i_classid == '926978479' && item.ui_price < Croma2CasePrice && isTrade("926978479_0")){
+        buyItem('auto phoenix case', tradeConfig["384801319_0"].price, "384801319_0", "24b506a9f9a4ba7f5cc559beaa2f52db");
 
-        buyItem('croma 2 case', Croma2CasePrice, "926978479_0", "7e3f6d929be4fde9184e3fa3fd06f5f5", true);
-    }else if (item.i_classid == '991959905' && item.ui_price < FalchionCasePrice && isTrade("991959905_0")){
+    }else if (item.i_classid == '926978479' && item.ui_price < tradeConfig["926978479_0"].price && isTrade("926978479_0")){
 
-        buyItem('auto falshion case', FalchionCasePrice, "991959905_0", "1a46f82e75779d8e97f9875b71ba2ae1", true);
-    }else if (item.i_classid == '720268538' && item.ui_price < FalchionCasePrice && isTrade("720268538_0")){
+        buyItem('auto croma 2 case', tradeConfig["926978479_0"].price, "926978479_0", "7e3f6d929be4fde9184e3fa3fd06f5f5");
 
-        buyItem('auto croma case', CromaCasePrice, "720268538_0", "87f2ab5b83b460193a1253e9048921fb", true);
+    }else if (item.i_classid == '991959905' && item.ui_price < tradeConfig["991959905_0"].price && isTrade("991959905_0")){
+
+        buyItem('auto falshion case', tradeConfig["991959905_0"].price, "991959905_0", "1a46f82e75779d8e97f9875b71ba2ae1");
+
+    }else if (item.i_classid == '720268538' && item.ui_price < tradeConfig["720268538_0"].price && isTrade("720268538_0")){
+
+        buyItem('auto Chroma Case', tradeConfig["720268538_0"].price, "720268538_0", "87f2ab5b83b460193a1253e9048921fb");
     }
 
 });
@@ -162,9 +170,15 @@ function reloadConfig(id){
                         return;
                     }
 
+                    tradeConfig = config.tradeConfig;
 
+                    for(var index in tradeConfig) {
 
+                        if (index in autoTradeConfig  )
+                            continue;
 
+                        autoTradeConfig[index] = tradeConfig[index].trading;
+                    }
 
                 } else {
                     console.log(error);
@@ -174,6 +188,7 @@ function reloadConfig(id){
     }
 
 }
+
 
 setInterval(function() {
     reloadConfig(botName);
@@ -458,12 +473,11 @@ function setStatusByBid(bid, status){
 }
 
 
-function buyItem( name, price, inst, hash, setTrading){
+function buyItem( name, price, inst, hash){
 
     var url = "https://csgo.tm/api/Buy/"+inst+"/"+(price * 100)+"/"+hash+"/?key="+config.apiKey;
 
     console.log("Request buy "+name+": " + price);
-
 
     request(url, function (error, response, body) {
 
@@ -472,23 +486,19 @@ function buyItem( name, price, inst, hash, setTrading){
             if (json.id != false){
                 console.log("Buy Ok");
                 addCsgoItem(0, json.id, '', '', ITEM_BOUGHT, '', 0);
-                tradeConfig[inst].auto = true; // включить авто покупку
+                autoTradeConfig[inst] = true; // включить авто покупку
             }else{
                 console.log(json.result);
                 if (json.result == 'К сожалению, предложение устарело. Обновите страницу') {
                     console.log('stop tradeConfig '+inst);
-                    tradeConfig[inst].auto = false; // выключить авто покупку
+                    autoTradeConfig[inst] = false; // выключить авто покупку
                 }
             }
 
         } catch (e) {
             wsDoLog('This doesn\'t look like a valid JSON111: '+body + ' '+e.message);
-            return;
         }
-
     });
-
-
 }
 
 /*********************************************************************************************************************/
