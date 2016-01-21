@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html ng-app>
+  <head>
+  <script src="//cdn.jsdelivr.net/sockjs/1.0.3/sockjs.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.11/angular.min.js"></script>
+
+  <script src="javascripts/chat.js"></script>
+  </head>
+
+  <body>
+
+  <div ng-controller="ChatCtrl">
+    <h1><%= title %></h1>
+    <ul>
+      <li ng-repeat="message in messages track by $index">{{message}}</li>
+    </ul>
+
+    <form ng-submit="sendMessage()">
+      <input type="text" ng-model="messageText" placeholder="Type your message here111" />
+      <input type="submit" value="Send" />
+    </form>
+  </div>
+
+  </body>
+</html>
+

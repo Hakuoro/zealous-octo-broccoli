@@ -383,6 +383,8 @@ function handleOffers() {
                                         contextid: 2,
                                         amount: 1,
                                         is_stackable: false },
+
+
                                         Object {
                                         id: '3960842480',
                                         owner: '76561198042384491',
