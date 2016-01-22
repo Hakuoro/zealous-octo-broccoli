@@ -4,7 +4,7 @@
 
 exports.index = function (req, res) {
     res.render('index', {
-        title: 'Express1111',
+        title: 'Loredal',
         token: '123asd'
     });
 };

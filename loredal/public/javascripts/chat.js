@@ -1,18 +1,18 @@
-var sock = new SockJS('http://newlke.ru:3000/chat');
-var token = '';
 
-function ChatCtrl($scope) {
-    $scope.messages = [];
+    var sock = new SockJS('http://newlke.ru:3000/chat');
+    var token = '';
 
     sock.onmessage = function (e) {
 
         message = JSON.parse(e.data);
 
-        if (message.f == 'getT'){
-            token = message.token;
-            console.log(token);
-        }
+        console.log(message);
 
+        if (message.f == 'setT'){
+            token = message.token;
+        } else if (message.f == 'update'){
+            document.querySelector('#p1').MaterialProgress.setProgress(message.progress);
+        }
     };
 
     sock.onclose = function (e) {
@@ -22,10 +22,19 @@ function ChatCtrl($scope) {
     sock.onopen = function (e) {
 
         var data = {
-          f:'getT'
+            f:'getT'
         };
 
         sock.send(JSON.stringify(data));
 
     };
-}
+
+    document.querySelector('#start').onclick = function() {
+
+        var data = {
+            f:'start',
+            t:token
+        };
+
+        sock.send(JSON.stringify(data));
+    };

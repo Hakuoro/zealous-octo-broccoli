@@ -9,78 +9,16 @@ var user = require('./models/user');
 var http = require('http');
 var path = require('path');
 
+var Server = require('./libs/server.js');
+
 var app = express();
 
 
 var connections = [];
-var users = {
-    "123asd":"Boris"
-};
+var users = [];
 
+users["123asd"] = "Boris";
 
-var sockjs_opts = {sockjs_url: "http://cdn.jsdelivr.net/sockjs/1.0.3/sockjs.min.js"};
-
-var sockjs = require('sockjs');
-
-
-var chat = sockjs.createServer(sockjs_opts);
-
-//var u = new user('Boris');
-//u.say('hello');
-
-chat.on('connection', function (conn) {
-
-    //connections.push(conn);
-
-    var token = '';
-
-    conn.on('data', function (message) {
-
-        message = JSON.parse(message);
-
-
-        if ( message.f != 'getT' && (typeof(message.t) == 'undefined' || message.t == '')){
-
-            conn.write(JSON.stringify({
-                f:'forbidden'
-            }));
-            return true;
-        }
-
-        if (typeof(users[message.t]) == 'undefined'){
-            conn.write(JSON.stringify({
-                f:'forbidden'
-            }));
-            return true;
-        }
-
-
-
-
-
-
-
-        if ( message.f == 'getT' ){
-
-            token = '123asd';  // todo token generation
-
-            var send = {
-                f:'getT',
-                token:token
-            };
-
-            conn.write(JSON.stringify(send));
-            connections[token] = conn;
-        }
-    });
-
-    conn.on('close', function () {
-        /*for (var ii = 0; ii < connections.length; ii++) {
-            connections[ii].write("User " + number + " has disconnected");
-        }
-        connections.splice(number - 1, 1);*/
-    });
-});
 
 // all environments
 app.set('port', process.env.PORT || 3000);
@@ -105,8 +43,11 @@ app.locals.users = users;
 app.get('/', routes.index);
 app.get('/users', userList.list);
 
-var server = http.createServer(app).listen(app.get('port'), function () {
+var httpServer = http.createServer(app).listen(app.get('port'), function () {
     console.log('Express server listening on port ' + app.get('port'));
 });
 
-chat.installHandlers(server, {prefix: '/chat'});
+
+var server = new Server(app, httpServer);
+
+server.start();
