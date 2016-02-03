@@ -17,14 +17,15 @@ server.prototype.start = function (){
     chat.on('connection', function (conn) {
 
         var token = '';
+        var updateRef = '';
 
         conn.on('data', function (message) {
 
             message = JSON.parse(message);
 
-            console.log(message);
+            //console.log(message);
 
-            if ( message.f != 'getT' && (typeof(message.t) == 'undefined' || message.t == '' || typeof(app.locals.users[message.t]) == 'undefined') ){
+            if ( message.f != 'getT' && (typeof(message.t) == 'undefined' || message.t == '' || typeof(app.locals.players[message.t]) == 'undefined') ){
 
                 conn.write(JSON.stringify({
                     f:'forbidden'
@@ -38,35 +39,38 @@ server.prototype.start = function (){
 
                 var send = {
                     f:'setT',
-                    token:token
+                    token:token,
+                    player:app.locals.players[token].playerData()
                 };
 
                 conn.write(JSON.stringify(send));
+
                 app.locals.connections[token] = conn;
-            }else if (message.f == 'start'){
 
-                var progress = 0;
+                updateRef = setInterval(function() {
 
-                var refreshId = setInterval(function() {
-
+                    app.locals.players[token].update();
+                    console.log(app.locals.players[token].playerData());
                     var send = {
                         f:'update',
-                        progress:progress
+                        player:app.locals.players[token].playerData()
                     };
 
                     conn.write(JSON.stringify(send));
 
-                    progress += 1;
-
-                    if (progress > 100) {
-                        clearInterval(refreshId);
-                    }
                 }, 100);
+
+                return;
+            }
+
+            if (message.f == 'start'){
+                app.locals.players[token].farm.start();
             }
 
         });
 
         conn.on('close', function () {
+            clearInterval(updateRef);
             /*for (var ii = 0; ii < connections.length; ii++) {
              connections[ii].write("User " + number + " has disconnected");
              }

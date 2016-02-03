@@ -1,6 +1,7 @@
 
     var sock = new SockJS('http://newlke.ru:3000/chat');
     var token = '';
+    var player;
 
     sock.onmessage = function (e) {
 
@@ -10,8 +11,11 @@
 
         if (message.f == 'setT'){
             token = message.token;
+            player = message.player;
         } else if (message.f == 'update'){
-            document.querySelector('#p1').MaterialProgress.setProgress(message.progress);
+            player = message.player;
+            document.querySelector('#p1').MaterialProgress.setProgress(player.farm.progress*100);
+            document.querySelector('#foodCount').innerHTML = player.warehouse.food;
         }
     };
 

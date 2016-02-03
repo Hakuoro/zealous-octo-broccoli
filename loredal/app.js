@@ -5,7 +5,7 @@
 var express = require('express');
 var routes = require('./routes');
 var userList = require('./routes/user');
-var user = require('./models/user');
+var player = require('./models/player');
 var http = require('http');
 var path = require('path');
 
@@ -15,9 +15,9 @@ var app = express();
 
 
 var connections = [];
-var users = [];
+var players = [];
 
-users["123asd"] = "Boris";
+players["123asd"] = new player('Boris');
 
 
 // all environments
@@ -38,7 +38,7 @@ if ('development' == app.get('env')) {
 }
 
 app.locals.connections = connections;
-app.locals.users = users;
+app.locals.players = players;
 
 app.get('/', routes.index);
 app.get('/users', userList.list);
