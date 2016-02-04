@@ -3,8 +3,10 @@ var farm = require('./farm');
 
 var player = function (name){
     this.name = name
-    this.warehouse = new warehouse();
-    this.farm = new farm();
+    this.warehouse = new warehouse(this);
+    this.farm = new farm(this);
+    this.connection = null;
+
 };
 
 var proto = player.prototype;
@@ -22,14 +24,24 @@ proto.playerData = function (){
 };
 
 
-proto.update = function (server){
+proto.update = function (){
 
     this.farm.update();
     if (this.farm.isFull()){
         this.warehouse.addResource('food', this.farm.getResourse())
     }
-
-
 };
+
+
+proto.say = function (name, data){
+
+    var send = {
+        f:name,
+        data:data
+    };
+
+    this.connection.write(JSON.stringify(send));
+};
+
 
 exports = module.exports = player;

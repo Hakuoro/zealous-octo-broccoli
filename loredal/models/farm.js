@@ -1,8 +1,10 @@
 
-var farm = function (){
-    //this.player = player;
+var farm = function (player){
+    this.player = player;
     this.ticksToProcess = 100;
     this.currentTicks = 0;
+    this.currentIntervals = 100;
+    this.updateRef = null;
     this.resourceToProcess = 1;
     this.processState = 0;
     this.state = 0;
@@ -10,12 +12,14 @@ var farm = function (){
 
 var proto = farm.prototype;
 
-proto.update = function (){
+proto.update = function (conn){
 
     if (this.state == 0)
-        return true;
+        return 0;
 
     this.currentTicks ++ ;
+
+    this.player.say('farmUpdate', this.getWorkStatus());
 
     if (this.currentTicks > this.ticksToProcess){
 
@@ -72,7 +76,7 @@ proto.stop = function (){
 
     this.state = 0;
     this.currentTicks = 0;
-
+    clearInterval(this.updateRef);
 };
 
 exports = module.exports = farm;

@@ -1,6 +1,6 @@
 
-var warehouse = function (){
-    //this.player = player;
+var warehouse = function (player){
+    this.player = player;
     this.maxCount = 100;
     this.foodCount = 0;
 };
@@ -24,6 +24,7 @@ proto.addResource = function (type, count){
             this.foodCount = this.maxCount;
         }
     }
+    this.player.say('resUpdate', this.getData());
 
 };
 

@@ -46,21 +46,10 @@ server.prototype.start = function (){
                 conn.write(JSON.stringify(send));
 
                 app.locals.connections[token] = conn;
+                app.locals.players[token].connection = conn;
 
                 updateRef = setInterval(function() {
                     app.locals.players[token].update();
-                }, 100);
-
-                updatePlayerRef = setInterval(function() {
-
-                    console.log(app.locals.players[token].playerData());
-                    var send = {
-                        f:'update',
-                        player:app.locals.players[token].playerData()
-                    };
-
-                    conn.write(JSON.stringify(send));
-
                 }, 100);
 
                 return;
@@ -74,7 +63,7 @@ server.prototype.start = function (){
 
         conn.on('close', function () {
             clearInterval(updateRef);
-            clearInterval(updatePlayerRef);
+            //clearInterval(updatePlayerRef);
             /*for (var ii = 0; ii < connections.length; ii++) {
              connections[ii].write("User " + number + " has disconnected");
              }

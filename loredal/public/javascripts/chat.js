@@ -11,12 +11,12 @@
 
         if (message.f == 'setT'){
             token = message.token;
-            player = message.player;
-        } else if (message.f == 'update'){
-            player = message.player;
-            document.querySelector('#p1').MaterialProgress.setProgress(player.farm.progress*100);
-            document.querySelector('#foodCount').innerHTML = player.warehouse.food;
+        } else if (message.f == 'farmUpdate'){
+            document.querySelector('#p1').MaterialProgress.setProgress(message.data.progress*100);
+        } else if (message.f == 'resUpdate'){
+            document.querySelector('#foodCount').innerHTML = message.data.food;
         }
+
     };
 
     sock.onclose = function (e) {
