@@ -1,7 +1,5 @@
-var warehouse = require('./warehouse');
-var farm = require('./farm');
 
-var player = function (name){
+var unit = function (name){
     this.name = name
     this.warehouse = new warehouse(this);
     this.farm = new farm(this);
