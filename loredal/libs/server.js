@@ -23,7 +23,7 @@ server.prototype.start = function (){
 
             message = JSON.parse(message);
 
-            //console.log(message);
+            console.log(message);
 
             if ( message.f != 'getT' && (typeof(message.t) == 'undefined' || message.t == '' || typeof(app.locals.players[message.t]) == 'undefined') ){
 
@@ -40,23 +40,23 @@ server.prototype.start = function (){
                 var send = {
                     f:'setT',
                     token:token,
-                    player:app.locals.players[token].playerData()
+                    player:app.locals.players[token].toJSON()
                 };
 
                 conn.write(JSON.stringify(send));
 
                 app.locals.connections[token] = conn;
-                app.locals.players[token].connection = conn;
+                app.locals.players[token].setConnection(conn);
 
                 updateRef = setInterval(function() {
                     app.locals.players[token].update();
-                }, 100);
+                }, app.locals.players[token].interval);
 
                 return;
             }
 
-            if (message.f == 'start'){
-                app.locals.players[token].farm.start();
+            if (message.f == 'startBattle'){
+                app.locals.players[token].startBattle();
             }
 
         });

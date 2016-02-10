@@ -5,7 +5,7 @@
 var express = require('express');
 var routes = require('./routes');
 var userList = require('./routes/user');
-var player = require('./models/player');
+var Player = require('./models/player');
 var http = require('http');
 var path = require('path');
 
@@ -17,7 +17,7 @@ var app = express();
 var connections = [];
 var players = [];
 
-players["123asd"] = new player('Boris');
+players["123asd"] = new Player({name:"Boris"});
 
 
 // all environments

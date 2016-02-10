@@ -11,10 +11,8 @@
 
         if (message.f == 'setT'){
             token = message.token;
-        } else if (message.f == 'farmUpdate'){
-            document.querySelector('#p1').MaterialProgress.setProgress(message.data.progress*100);
-        } else if (message.f == 'resUpdate'){
-            document.querySelector('#foodCount').innerHTML = message.data.food;
+        } else if (message.f == 'rivalUpdate'){
+            document.querySelector('#p1').MaterialProgress.setProgress((message.data.maxHp - message.data.hp)/message.data.maxHp*100);
         }
 
     };
@@ -36,7 +34,7 @@
     document.querySelector('#start').onclick = function() {
 
         var data = {
-            f:'start',
+            f:'startBattle',
             t:token
         };
 
