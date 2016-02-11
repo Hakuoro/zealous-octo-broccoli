@@ -17,6 +17,10 @@ function Player (opts){
 
     this.interval = 100;
 
+    this.exp = 0;
+
+    this.level = 1;
+
 }
 
 util.inherits(Player, Unit);
@@ -52,9 +56,6 @@ Player.prototype.startBattle = function (){
     if (!this.currentRival)
         this.findRival();
 
-
-    console.log(this.currentRival.name);
-
     this.state = 1;
 
 };
@@ -62,6 +63,13 @@ Player.prototype.startBattle = function (){
 Player.prototype.killedRival = function (){
 
     this.say('killed', {});
+
+    this.addExp()
+    this.findRival();
+
+};
+
+Player.prototype.addExp = function (){
 
 };
 
