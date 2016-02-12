@@ -13,7 +13,11 @@ function Player (opts){
 
     this.state = 0;
 
-    this.dps = 50;
+    // auto attack
+    this.dps = 10;
+
+    // click attack
+    this.clickDamage = 10;
 
     this.interval = 100;
 
@@ -27,6 +31,13 @@ util.inherits(Player, Unit);
 
 module.exports = Player;
 
+Player.prototype.init = function (opts){
+
+    this.setConnection(opts.conn);
+
+    this.findRival();
+};
+
 
 Player.prototype.update = function (){
 
@@ -39,30 +50,43 @@ Player.prototype.update = function (){
             // кирдык
             this.state = 0;
             this.killedRival();
+            this.say('killed', {});
         }else{
 
             this.say('rivalUpdate', this.currentRival.toJSON());
         }
 
+        return true;
+
+    }
+
+
+    if (this.state  == 0 || !this.currentRival){
+        this.findRival();
     }
 };
 
 Player.prototype.startBattle = function (){
 
-    if (this.state  == 1){
+    if (this.state  != 1 || !this.currentRival){
         return true;
     }
 
-    if (!this.currentRival)
-        this.findRival();
+    var rivalHp = this.currentRival.getDamage(this.clickDamage);
 
-    this.state = 1;
+    if (rivalHp == 0){
+        // кирдык
+        this.state = 0;
+        this.killedRival();
+        this.say('killed', {});
+    }else{
+
+        this.say('rivalUpdate', this.currentRival.toJSON());
+    }
 
 };
 
 Player.prototype.killedRival = function (){
-
-    this.say('killed', {});
 
     this.addExp()
     this.findRival();
@@ -94,6 +118,9 @@ Player.prototype.setConnection = function (connection){
 
 Player.prototype.findRival = function (){
     this.currentRival = new Orc({name:"Borg"});
+    this.say('newRival', this.currentRival.toJSON());
+
+    this.state = 1;
 };
 
 

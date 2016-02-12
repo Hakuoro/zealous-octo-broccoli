@@ -17,6 +17,7 @@ Orc.prototype.toJSON = function (){
 
     return {
         hp:this.hp,
+        name:this.name,
         maxHp:this.maxHp
     };
 

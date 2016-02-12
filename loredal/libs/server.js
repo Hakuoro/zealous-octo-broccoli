@@ -46,7 +46,7 @@ server.prototype.start = function (){
                 conn.write(JSON.stringify(send));
 
                 app.locals.connections[token] = conn;
-                app.locals.players[token].setConnection(conn);
+                app.locals.players[token].init({conn:conn})
 
                 updateRef = setInterval(function() {
                     app.locals.players[token].update();

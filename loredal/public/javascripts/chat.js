@@ -13,6 +13,13 @@
             token = message.token;
         } else if (message.f == 'rivalUpdate'){
             document.querySelector('#p1').MaterialProgress.setProgress((message.data.maxHp - message.data.hp)/message.data.maxHp*100);
+            document.querySelector('.mdl-card__title-hp').innerHTML = ' ( '+message.data.hp+'/'+message.data.maxHp+' )';
+        }else if (message.f == 'killed'){
+            document.querySelector('#p1').MaterialProgress.setProgress(100);
+        }else if (message.f == 'newRival'){
+            document.querySelector('.mdl-card__title-name').innerHTML = message.data.name;
+            document.querySelector('.mdl-card__title-hp').innerHTML = ' ( '+message.data.hp+'/'+message.data.maxHp+' )';
+            document.querySelector('#p1').MaterialProgress.setProgress(0);
         }
 
     };
