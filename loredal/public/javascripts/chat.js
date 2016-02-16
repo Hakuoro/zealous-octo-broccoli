@@ -20,6 +20,8 @@
             document.querySelector('.mdl-card__title-name').innerHTML = message.data.name;
             document.querySelector('.mdl-card__title-hp').innerHTML = ' ( '+message.data.hp+'/'+message.data.maxHp+' )';
             document.querySelector('#p1').MaterialProgress.setProgress(0);
+        }else if (message.f == 'playerUpdate'){
+            document.querySelector('.mdl-layout-title').innerHTML = message.data.name;
         }
 
     };

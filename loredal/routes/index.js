@@ -3,8 +3,5 @@
  */
 
 exports.index = function (req, res) {
-    res.render('index', {
-        title: 'Loredal',
-        token: '123asd'
-    });
+    res.render('index', {});
 };

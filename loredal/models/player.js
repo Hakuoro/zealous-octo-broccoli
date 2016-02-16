@@ -25,6 +25,12 @@ function Player (opts){
 
     this.level = 1;
 
+    this.needExp = 10;
+
+    this.expMult = .1;
+
+    this.damageMult = .1;
+
 }
 
 util.inherits(Player, Unit);
@@ -36,11 +42,11 @@ Player.prototype.init = function (opts){
     this.setConnection(opts.conn);
 
     this.findRival();
+    this.say('playerUpdate', this.toJSON());
 };
 
 
 Player.prototype.update = function (){
-
 
     if (this.state == 1 && this.currentRival){
 
@@ -57,13 +63,31 @@ Player.prototype.update = function (){
         }
 
         return true;
-
     }
 
 
     if (this.state  == 0 || !this.currentRival){
         this.findRival();
     }
+};
+
+
+Player.prototype.levelUp = function (){
+
+    this.exp = 0;
+
+    this.needExp +=  Math.ceil(this.needExp * this.expMult);
+
+    this.dps += Math.floor(this.dps * this.damageMult);
+
+    this.clickDamage += Math.floor(this.clickDamage * this.damageMult);
+
+    this.level ++;
+
+    this.say('playerUpdate', this.toJSON());
+
+    console.log(this);
+
 };
 
 Player.prototype.startBattle = function (){
@@ -91,9 +115,18 @@ Player.prototype.killedRival = function (){
     this.addExp()
     this.findRival();
 
+    console.log(this.toJSON());
+
+
 };
 
 Player.prototype.addExp = function (){
+    this.exp += this.currentRival.exp;
+
+    if (this.exp >= this.needExp){
+
+        this.levelUp();
+    }
 
 };
 
@@ -106,7 +139,10 @@ Player.prototype.toJSON = function (){
     return {
         hp:this.hp,
         maxHp:this.maxHp,
-        currentRivals:this.currentRival?this.currentRival.toJSON():{}
+        currentRivals:this.currentRival?this.currentRival.toJSON():{},
+        exp:this.exp,
+        needExp:this.needExp,
+        level:this.level
     };
 
 };
