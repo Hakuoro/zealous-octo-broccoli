@@ -1,4 +1,21 @@
 
+$(document).ready(function() {
+
+    /*
+    $(".rival-card").mousedown(function(){
+
+        $(this).removeClass( "mdl-shadow--16dp" );
+        $(this).addClass( "mdl-shadow--4dp" );
+
+    });
+
+    $(".rival-card").mouseup(function(){
+
+        $(this).removeClass( "mdl-shadow--4dp" );
+        $(this).addClass( "mdl-shadow--16dp" );
+    });*/
+
+
     var sock = new SockJS('http://newlke.ru:3000/chat');
     var token = '';
     var player;
@@ -12,16 +29,24 @@
         if (message.f == 'setT'){
             token = message.token;
         } else if (message.f == 'rivalUpdate'){
+
             document.querySelector('#p1').MaterialProgress.setProgress((message.data.maxHp - message.data.hp)/message.data.maxHp*100);
             document.querySelector('.mdl-card__title-hp').innerHTML = ' ( '+message.data.hp+'/'+message.data.maxHp+' )';
+
         }else if (message.f == 'killed'){
+
             document.querySelector('#p1').MaterialProgress.setProgress(100);
+
         }else if (message.f == 'newRival'){
-            document.querySelector('.mdl-card__title-name').innerHTML = message.data.name;
-            document.querySelector('.mdl-card__title-hp').innerHTML = ' ( '+message.data.hp+'/'+message.data.maxHp+' )';
+
             document.querySelector('#p1').MaterialProgress.setProgress(0);
+
+            document.querySelector(".mdl-card__title-name").innerHTML = message.data.name;
+            document.querySelector(".mdl-card__title-hp").innerHTML = ' ( '+message.data.hp+'/'+message.data.maxHp+' )';
+
+
         }else if (message.f == 'playerUpdate'){
-            document.querySelector('.mdl-layout-title').innerHTML = message.data.name;
+
         }
 
     };
@@ -40,7 +65,8 @@
 
     };
 
-    document.querySelector('#start').onclick = function() {
+
+    $(".rival-card").click(function(){
 
         var data = {
             f:'startBattle',
@@ -48,4 +74,23 @@
         };
 
         sock.send(JSON.stringify(data));
-    };
+
+    });
+
+});
+
+
+
+
+  /*  document.querySelector('#rival-card').onclick = function() {
+
+
+
+
+        var data = {
+            f:'startBattle',
+            t:token
+        };
+
+        sock.send(JSON.stringify(data));
+    };*/
