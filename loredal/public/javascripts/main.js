@@ -1,11 +1,12 @@
 
 $(document).ready(function() {
 
-    /*
+/*
     $(".rival-card").mousedown(function(){
 
         $(this).removeClass( "mdl-shadow--16dp" );
         $(this).addClass( "mdl-shadow--4dp" );
+        $( this ).css( "margin", "5px" );
 
     });
 
@@ -13,8 +14,9 @@ $(document).ready(function() {
 
         $(this).removeClass( "mdl-shadow--4dp" );
         $(this).addClass( "mdl-shadow--16dp" );
-    });*/
-
+        $( this ).css( "margin", "8px" );
+    });
+*/
 
     var sock = new SockJS('http://newlke.ru:3000/chat');
     var token = '';
@@ -66,7 +68,7 @@ $(document).ready(function() {
     };
 
 
-    $(".rival-card").click(function(){
+  /*  $(".rival-card").click(function(){
 
         var data = {
             f:'startBattle',
@@ -75,7 +77,7 @@ $(document).ready(function() {
 
         sock.send(JSON.stringify(data));
 
-    });
+    });*/
 
 });
 
