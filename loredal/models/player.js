@@ -48,6 +48,8 @@ Player.prototype.init = function (opts){
 
 Player.prototype.update = function (){
 
+    return true;
+
     if (this.state == 1 && this.currentRival){
 
         var rivalHp = this.currentRival.getDamage(this.damage());
