@@ -22,6 +22,8 @@ $(document).ready(function() {
     var token = '';
     var player;
 
+    var qs =  document.querySelector;
+
     sock.onmessage = function (e) {
 
         message = JSON.parse(e.data);
@@ -32,7 +34,10 @@ $(document).ready(function() {
             token = message.token;
         } else if (message.f == 'rivalUpdate'){
 
-            document.querySelector('#p1').MaterialProgress.setProgress((message.data.maxHp - message.data.hp)/message.data.maxHp*100);
+            //document.querySelector('#p1').MaterialProgress.setProgress((message.data.maxHp - message.data.hp)/message.data.maxHp*100);
+            qs('#p1').MaterialProgress.setProgress((message.data.maxHp - message.data.hp)/message.data.maxHp*100);
+
+
             document.querySelector('.mdl-card__title-hp').innerHTML = ' ( '+message.data.hp+'/'+message.data.maxHp+' )';
 
         }else if (message.f == 'killed'){
