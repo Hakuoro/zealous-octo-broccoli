@@ -1,6 +1,7 @@
 var sockjs = require('sockjs');
-var sockjs_opts = {sockjs_url: "http://cdn.jsdelivr.net/sockjs/1.0.3/sockjs.min.js"};
+var sockjs_opts = {sockjs_url: "https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.0.3/sockjs.min.js"};
 
+var UserService = require('userService');
 
 var server = function (app, httpServer){
     this._app = app;
@@ -18,12 +19,40 @@ server.prototype.start = function (){
 
         var token = '';
         var updateRef, updatePlayerRef = '';
+        var us = new UserService({app:app});
 
         conn.on('data', function (message) {
 
             message = JSON.parse(message);
 
             console.log(message);
+
+            var player = null;
+
+            if ( message.f == 'getT' ){
+
+                token = message.name + '123asd';  // todo token generation
+
+                player = us.getUser(message.name, '');
+
+                var send = {
+                    f:'setT',
+                    token:token,
+                    player:player.toJSON()
+                };
+
+                conn.write(JSON.stringify(send));
+
+                app.locals.connections[token] = player.name;
+                player.init({conn:conn})
+
+                updateRef = setInterval(function() {
+                    player.update();
+                }, player.interval);
+
+                return;
+            }
+
 
             if ( message.f != 'getT' && (typeof(message.t) == 'undefined' || message.t == '' || typeof(app.locals.players[message.t]) == 'undefined') ){
 
@@ -33,30 +62,18 @@ server.prototype.start = function (){
                 return true;
             }
 
-            if ( message.f == 'getT' ){
 
-                token = '123asd';  // todo token generation
+            player = us.getUser(message.t);
 
-                var send = {
-                    f:'setT',
-                    token:token,
-                    player:app.locals.players[token].toJSON()
-                };
-
-                conn.write(JSON.stringify(send));
-
-                app.locals.connections[token] = conn;
-                app.locals.players[token].init({conn:conn})
-
-                updateRef = setInterval(function() {
-                    app.locals.players[token].update();
-                }, app.locals.players[token].interval);
-
-                return;
+            if (!player){
+                conn.write(JSON.stringify({
+                    f:'forbidden'
+                }));
+                return true;
             }
 
             if (message.f == 'startBattle'){
-                app.locals.players[token].startBattle();
+                player.startBattle();
             }
 
         });

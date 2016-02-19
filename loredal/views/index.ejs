@@ -1,20 +1,4 @@
 <!doctype html>
-<!--
-  Material Design Lite
-  Copyright 2015 Google Inc. All rights reserved.
-
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-      https://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License
--->
 <html lang="en">
 <head>
 	<meta charset="utf-8">
@@ -61,7 +45,23 @@
 	</style>
 </head>
 <body>
-<div class="loredal-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+<div class="login-div" style="text-align: center">
+	<form action="#">
+		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+			<input class="mdl-textfield__input" type="text" id="playerName">
+			<label class="mdl-textfield__label" for="playerName">Имя...</label>
+		</div>
+		<div >
+			<button class="enter-button mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+				Войти
+			</button>
+		</div>
+
+	</form>
+</div>
+
+
+<div class="loredal-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header" style="visibility: hidden">
 	<header class="loredal-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
 		<div class="mdl-layout__header-row">
 			<span class="mdl-layout-title">Loredal</span>
@@ -127,7 +127,7 @@
 	</main>
 </div>
 <script src="https://code.getmdl.io/1.1.1/material.min.js"></script>
-<script src="https://cdn.jsdelivr.net/sockjs/1.0.3/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.0.3/sockjs.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <script src="javascripts/main.js"></script>
 

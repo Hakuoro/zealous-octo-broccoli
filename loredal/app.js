@@ -3,8 +3,8 @@
  */
 
 var express = require('express');
-var routes = require('./routes');
-var userList = require('./routes/user');
+var login = require('./routes/login');
+var game = require('./routes/index');
 var Player = require('./models/player');
 var http = require('http');
 var path = require('path');
@@ -16,8 +16,6 @@ var app = express();
 
 var connections = [];
 var players = [];
-
-players["123asd"] = new Player({name:"Boris"});
 
 
 // all environments
@@ -40,8 +38,9 @@ if ('development' == app.get('env')) {
 app.locals.connections = connections;
 app.locals.players = players;
 
-app.get('/', routes.index);
-app.get('/users', userList.list);
+
+//app.get('/', login.login);
+app.get('/', game.index);
 
 var httpServer = http.createServer(app).listen(app.get('port'), function () {
     console.log('Express server listening on port ' + app.get('port'));
