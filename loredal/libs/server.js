@@ -43,13 +43,16 @@ server.prototype.start = function (){
 
                 conn.write(JSON.stringify(send));
 
-
                 app.locals.connections[token] = player.name;
                 player.init({conn:conn});
 
                 updateRef = setInterval(function() {
                     player.update();
                 }, player.interval);
+
+                updatePlayerRef = setInterval(function() {
+                    us.saveUser(player);
+                }, 5000);
 
                 return;
             }

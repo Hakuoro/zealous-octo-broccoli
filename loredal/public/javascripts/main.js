@@ -2,6 +2,12 @@
 $(document).ready(function() {
 
     $('.loredal-layout').hide();
+    jq('.login-div').hide();
+
+
+
+
+
 
     $(".enter-button").click(function(){
 
