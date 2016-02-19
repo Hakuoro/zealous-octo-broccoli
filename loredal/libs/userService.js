@@ -3,7 +3,7 @@ var Player = require('../models/player');
 
 function UserService (opts){
 
-    this.userDir = opts.userDir || '../users/';
+    this.userDir = opts.userDir || './users/';
     this.app = opts.app;
 
 }
@@ -15,19 +15,19 @@ UserService.prototype.initUser = function (name, passw){
     }
 
     var player = '';
+    var path = fs.realpathSync(this.userDir) + '/';
 
-    if (!fs.existsSync(this.userDir + name)) {
+    if (!fs.existsSync(path + name)) {
 
         player = new Player({name:name});
-        fs.writeFileSync(this.userDir + name, player.toJSON());
+        fs.writeFileSync(path + name, JSON.stringify(player.toJSON()));
         this.app.locals.players[name] = player;
         return player;
     }
 
+    player = new Player(JSON.parse(fs.readFileSync(path + name)));
 
-    player = new Player(JSON.parse(fs.readFileSync(this.userDir + name)));
     this.app.locals.players[name] = player;
-
 
     return  player;
 };

@@ -139,6 +139,7 @@ Player.prototype.damage = function (){
 Player.prototype.toJSON = function (){
 
     return {
+        name:this.name,
         hp:this.hp,
         maxHp:this.maxHp,
         currentRivals:this.currentRival?this.currentRival.toJSON():{},

@@ -1,7 +1,7 @@
 var sockjs = require('sockjs');
 var sockjs_opts = {sockjs_url: "https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.0.3/sockjs.min.js"};
 
-var UserService = require('userService');
+var UserService = require('./userService');
 
 var server = function (app, httpServer){
     this._app = app;
@@ -33,7 +33,7 @@ server.prototype.start = function (){
 
                 token = message.name + '123asd';  // todo token generation
 
-                player = us.getUser(message.name, '');
+                player = us.initUser(message.name, '');
 
                 var send = {
                     f:'setT',
@@ -43,8 +43,9 @@ server.prototype.start = function (){
 
                 conn.write(JSON.stringify(send));
 
+
                 app.locals.connections[token] = player.name;
-                player.init({conn:conn})
+                player.init({conn:conn});
 
                 updateRef = setInterval(function() {
                     player.update();

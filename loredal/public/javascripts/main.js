@@ -1,6 +1,8 @@
 
 $(document).ready(function() {
 
+    $('.loredal-layout').hide();
+
     $(".enter-button").click(function(){
 
         var playerName = $("#playerName").val();
@@ -15,7 +17,7 @@ $(document).ready(function() {
         var token = '';
         var player;
 
-        var qs =  document.querySelector;
+        var jq =  $;
 
 
         sock.onopen = function (e) {
@@ -41,17 +43,21 @@ $(document).ready(function() {
 
             if (message.f == 'setT'){
                 token = message.token;
+
+
+                jq('.login-div').hide();
+                jq('.loredal-layout').show();
+
+
             } else if (message.f == 'rivalUpdate'){
 
-                //document.querySelector('#p1').MaterialProgress.setProgress((message.data.maxHp - message.data.hp)/message.data.maxHp*100);
-                qs('#p1').MaterialProgress.setProgress((message.data.maxHp - message.data.hp)/message.data.maxHp*100);
-
-
+                document.querySelector('#p1').MaterialProgress.setProgress((message.data.maxHp - message.data.hp)/message.data.maxHp*100);
                 document.querySelector('.mdl-card__title-hp').innerHTML = ' ( '+message.data.hp+'/'+message.data.maxHp+' )';
+                document.querySelector(".mdl-card__title-name").innerHTML = message.data.name;
 
             }else if (message.f == 'killed'){
 
-                document.querySelector('#p1').MaterialProgress.setProgress(100);
+                document.querySelector('#p1').MaterialProgress.setProgress(10);
 
             }else if (message.f == 'newRival'){
 
