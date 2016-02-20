@@ -2,39 +2,27 @@
 $(document).ready(function() {
 
     $('.loredal-layout').hide();
-    jq('.login-div').hide();
-
-
-
-
-
-
-    $(".enter-button").click(function(){
-
-        var playerName = $("#playerName").val();
-        if (playerName){
-            main(playerName);
-        }
-    });
+    $('.login-div').hide();
 
     var main = function(playerName){
 
         var sock = new SockJS('http://newlke.ru:3000/chat');
-        var token = '';
+        var token = null;
         var player;
 
         var jq =  $;
 
-
         sock.onopen = function (e) {
-
             var data = {
-                f:'getT',
-                name:playerName
+                f:'initPlayer'
             };
+            if (token = Cookies.get('token')){
+                data['name'] = Cookies.get('name');
+            }else{
+                data['name'] = playerName;
+            }
 
             sock.send(JSON.stringify(data));
-
         };
 
         sock.onclose = function (e) {
@@ -50,39 +38,63 @@ $(document).ready(function() {
             if (message.f == 'setT'){
                 token = message.token;
 
+                Cookies.set('token', token, { expires: 20 });
+                Cookies.set('name', message.player.name, { expires: 20 });
 
                 jq('.login-div').hide();
                 jq('.loredal-layout').show();
 
+                playerUpdate(message.player);
 
             } else if (message.f == 'rivalUpdate'){
 
                 document.querySelector('#p1').MaterialProgress.setProgress((message.data.maxHp - message.data.hp)/message.data.maxHp*100);
-                document.querySelector('.mdl-card__title-hp').innerHTML = ' ( '+message.data.hp+'/'+message.data.maxHp+' )';
-                document.querySelector(".mdl-card__title-name").innerHTML = message.data.name;
+                jq('.mdl-card__title-hp').text(' ( '+message.data.hp+'/'+message.data.maxHp+' )');
+                //jq(".mdl-card__title-name").text(message.data.name);
 
             }else if (message.f == 'killed'){
 
-                document.querySelector('#p1').MaterialProgress.setProgress(10);
+                document.querySelector('#p1').MaterialProgress.setProgress(0);
 
             }else if (message.f == 'newRival'){
 
                 document.querySelector('#p1').MaterialProgress.setProgress(0);
 
-                document.querySelector(".mdl-card__title-name").innerHTML = message.data.name;
-                document.querySelector(".mdl-card__title-hp").innerHTML = ' ( '+message.data.hp+'/'+message.data.maxHp+' )';
+                var rival = message.data;
 
+                jq(".mdl-card__title-name").text(rival.name);
+                jq(".mdl-card__title-hp").text(' ( ' + rival.hp+'/' + rival.maxHp+' )');
 
             }else if (message.f == 'playerUpdate'){
-
+                playerUpdate(message.data);
             }
-
         };
-
-
-
-
     };
+
+    var playerUpdate = function(player){
+
+        $('.player-name').text(player.name);
+        $('.player-level').text(player.level);
+        $('.player-dps').text(player.dps);
+        $('.player-click').text(player.clickDamage);
+
+        document.querySelector('.player-exp').MaterialProgress.setProgress(player.exp/player.needExp*100);
+    };
+
+
+
+    if (Cookies.get('token')){
+        $('.loredal-layout').show();
+        main('');
+    }else{
+        $('.login-div').show();
+        $(".enter-button").click(function(){
+            var playerName = $("#playerName").val();
+            if (playerName){
+                main(playerName);
+            }
+        });
+    }
 
 
 

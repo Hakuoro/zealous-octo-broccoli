@@ -79,24 +79,15 @@
 		<header class="loredal-drawer-header">
 			<img src="images/user.jpg" class="loredal-avatar">
 			<div class="loredal-avatar-dropdown">
-				<span>hello@example.com11</span>
+				<span class="player-name"></span>
 				<div class="mdl-layout-spacer"></div>
-				<button id="accbtn" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
-					<i class="material-icons" role="presentation">arrow_drop_down</i>
-					<span class="visuallyhidden">Accounts</span>
-				</button>
-				<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="accbtn">
-					<li class="mdl-menu__item">hello@example.com</li>
-					<li class="mdl-menu__item">info@example.com</li>
-					<li class="mdl-menu__item"><i class="material-icons">add</i>Add another account...</li>
-				</ul>
 			</div>
 		</header>
-		<div   style="width:600px" class="levelIndicator mdl-progress mdl-js-progress"></div>
+		<div class="player-exp mdl-progress mdl-js-progress"></div>
 		<nav class="loredal-navigation mdl-navigation mdl-color--blue-grey-800">
-			<span  >Уровень: <span class="level"></span></span>
-			<span  >Урон: <span class="dps"></span></span>
-			<span  >Урон клика: <span class="dps"></span></span>
+			<span  >Уровень: <span class="player-level"></span></span>
+			<span  >Урон: <span class="player-dps"></span></span>
+			<span  >Урон клика: <span class="player-click"></span></span>
 			<div class="mdl-layout-spacer"></div>
 		</nav>
 	</div>
@@ -129,6 +120,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.0.3/sockjs.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <script src="javascripts/main.js"></script>
+<script src="javascripts/js.cookie.js"></script>
 
 </body>
 </html>

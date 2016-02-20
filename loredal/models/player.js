@@ -6,28 +6,28 @@ function Player (opts){
     this.name = opts.name || "Boris";
     this.connection = null;
 
-    this.maxHp = 100;
-    this.hp = 100;
+    this.maxHp = opts.maxHp || 100;
+    this.hp = opts.hp || 100;
 
     this.currentRival = null;
 
     this.state = 0;
 
     // auto attack
-    this.dps = 10;
+    this.dps = opts.dps || 10;
 
     // click attack
-    this.clickDamage = 10;
+    this.clickDamage = opts.clickDamage || 10;
 
     this.interval = 100;
 
-    this.exp = 0;
+    this.exp = opts.exp || 0;
 
-    this.level = 1;
+    this.level = opts.level || 1;
 
-    this.needExp = 10;
+    this.needExp = opts.needExp || 10;
 
-    this.expMult = .1;
+    this.expMult = .12;
 
     this.damageMult = .1;
 
@@ -85,11 +85,6 @@ Player.prototype.levelUp = function (){
     this.clickDamage += Math.floor(this.clickDamage * this.damageMult);
 
     this.level ++;
-
-    this.say('playerUpdate', this.toJSON());
-
-    console.log(this);
-
 };
 
 Player.prototype.startBattle = function (){
@@ -107,7 +102,7 @@ Player.prototype.startBattle = function (){
         this.say('killed', {});
     }else{
 
-        this.say('rivalUpdate', this.currentRival.toJSON());
+        this.say('rivalUpdate', this.toJSON());
     }
 
 };
@@ -116,10 +111,6 @@ Player.prototype.killedRival = function (){
 
     this.addExp()
     this.findRival();
-
-    console.log(this.toJSON());
-
-
 };
 
 Player.prototype.addExp = function (){
@@ -130,24 +121,11 @@ Player.prototype.addExp = function (){
         this.levelUp();
     }
 
+    this.say('playerUpdate', this.toJSON());
 };
 
 Player.prototype.damage = function (){
     return this.dps * (this.interval/1000);
-};
-
-Player.prototype.toJSON = function (){
-
-    return {
-        name:this.name,
-        hp:this.hp,
-        maxHp:this.maxHp,
-        currentRivals:this.currentRival?this.currentRival.toJSON():{},
-        exp:this.exp,
-        needExp:this.needExp,
-        level:this.level
-    };
-
 };
 
 Player.prototype.setConnection = function (connection){
@@ -158,7 +136,6 @@ Player.prototype.setConnection = function (connection){
 Player.prototype.findRival = function (){
     this.currentRival = new Orc({name:"Borg"});
     this.say('newRival', this.currentRival.toJSON());
-
     this.state = 1;
 };
 
@@ -171,4 +148,20 @@ Player.prototype.say = function (name, data){
     };
 
     this.connection.write(JSON.stringify(send));
+};
+
+Player.prototype.toJSON = function (){
+
+    return {
+        name:this.name,
+        hp:this.hp,
+        maxHp:this.maxHp,
+        currentRivals:this.currentRival?this.currentRival.toJSON():{},
+        exp:this.exp,
+        needExp:this.needExp,
+        dps:this.dps,
+        clickDamage:this.clickDamage,
+        level:this.level
+    };
+
 };

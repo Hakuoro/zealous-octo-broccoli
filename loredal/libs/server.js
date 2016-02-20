@@ -29,10 +29,9 @@ server.prototype.start = function (){
 
             var player = null;
 
-            if ( message.f == 'getT' ){
+            if ( message.f == 'initPlayer' ){
 
                 token = message.name + '123asd';  // todo token generation
-
                 player = us.initUser(message.name, '');
 
                 var send = {
@@ -56,7 +55,6 @@ server.prototype.start = function (){
 
                 return;
             }
-
 
             if ( message.f != 'getT' && (typeof(message.t) == 'undefined' || message.t == '' || typeof(app.locals.players[message.t]) == 'undefined') ){
 
