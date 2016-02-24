@@ -45,10 +45,6 @@ server.prototype.start = function (){
                 app.locals.connections[token] = player.name;
                 player.init({conn:conn});
 
-                updateRef = setInterval(function() {
-                    player.update();
-                }, player.interval);
-
                 updatePlayerRef = setInterval(function() {
                     us.saveUser(player);
                 }, 5000);
@@ -56,7 +52,7 @@ server.prototype.start = function (){
                 return;
             }
 
-            if ( message.f != 'getT' && (typeof(message.t) == 'undefined' || message.t == '' || typeof(app.locals.players[message.t]) == 'undefined') ){
+            if ( message.f != 'getT' && (typeof(message.t) == 'undefined' || message.t == '' || us.getUser(message.t) == false) ){
 
                 conn.write(JSON.stringify({
                     f:'forbidden'
@@ -69,7 +65,7 @@ server.prototype.start = function (){
 
             if (!player){
                 conn.write(JSON.stringify({
-                    f:'forbidden'
+                    f:'forbidden1'
                 }));
                 return true;
             }
@@ -81,7 +77,7 @@ server.prototype.start = function (){
         });
 
         conn.on('close', function () {
-            clearInterval(updateRef);
+            clearInterval(updatePlayerRef);
             //clearInterval(updatePlayerRef);
             /*for (var ii = 0; ii < connections.length; ii++) {
              connections[ii].write("User " + number + " has disconnected");

@@ -4,11 +4,14 @@ $(document).ready(function() {
     $('.loredal-layout').hide();
     $('.login-div').hide();
 
+
     var main = function(playerName){
 
         var sock = new SockJS('http://newlke.ru:3000/chat');
+
+        var state = 0;
         var token = null;
-        var player;
+
 
         var jq =  $;
 
@@ -33,6 +36,11 @@ $(document).ready(function() {
 
             message = JSON.parse(e.data);
 
+            var battleCounter,
+            battleUpdate,
+            progressUpdate,
+            progress, rival, battleTurn, battleTime;
+
             console.log(message);
 
             if (message.f == 'setT'){
@@ -53,22 +61,77 @@ $(document).ready(function() {
                 //jq(".mdl-card__title-name").text(message.data.name);
 
             }else if (message.f == 'killed'){
-
+                clearInterval(battleTurn);
+                state = 0;
+                jq(".rival-card-active").toggleClass("mdl-shadow--8dp").toggleClass("mdl-shadow--4dp").removeClass("rival-card-active");
                 document.querySelector('#p1').MaterialProgress.setProgress(0);
-
+                progress = 0;
             }else if (message.f == 'newRival'){
 
                 document.querySelector('#p1').MaterialProgress.setProgress(0);
 
-                var rival = message.data;
+                rival = message.data;
 
                 jq(".mdl-card__title-name").text(rival.name);
-                jq(".mdl-card__title-hp").text(' ( ' + rival.hp+'/' + rival.maxHp+' )');
+                jq(".mdl-card__title-hp").text(' ( ' + rival.maxHp + ' )');
 
             }else if (message.f == 'playerUpdate'){
                 playerUpdate(message.data);
+            }else if (message.f == 'startBattle'){
+
+                state = 1;
+
+                var battleProgress = document.querySelector('#p1');
+
+                battleProgress.MaterialProgress.setProgress(0);
+
+                battleUpdate = 1000;
+
+                rival = message.data.rival;
+                battleTime = message.data.battleTime - battleUpdate;
+
+                jq(".mdl-card__title-name").text(rival.name);
+
+                battleCounter = 0;
+
+                progressUpdate = battleUpdate/battleTime*100;
+                progress = 0;
+
+                battleTurn = setInterval(function(){
+                    if(battleCounter <= battleTime) {
+                        battleCounter += battleUpdate;
+                        progress += progressUpdate;
+                        battleProgress.MaterialProgress.setProgress(progress);
+                    } else {
+                        clearInterval(battleTurn);
+                        state = 0;
+                        document.querySelector('#p1').MaterialProgress.setProgress(0);
+                        progress = 0;
+                    }
+                }, battleUpdate);
             }
         };
+
+
+        $(".rival-card").click(function(){
+
+            if (state == 0) {
+
+                jq(this).toggleClass("mdl-shadow--8dp").toggleClass("mdl-shadow--4dp").addClass("rival-card-active");
+
+                var data = {
+                    f: 'startBattle',
+                    t: token
+                };
+
+                sock.send(JSON.stringify(data));
+            }
+        });
+
+
+
+
+
     };
 
     var playerUpdate = function(player){
@@ -95,31 +158,6 @@ $(document).ready(function() {
             }
         });
     }
-
-
-
-
-/*
-    $(".rival-card").mousedown(function(){
-
-        $(this).removeClass( "mdl-shadow--16dp" );
-        $(this).addClass( "mdl-shadow--4dp" );
-        $( this ).css( "margin", "5px" );
-
-    });
-
-    $(".rival-card").mouseup(function(){
-
-        $(this).removeClass( "mdl-shadow--4dp" );
-        $(this).addClass( "mdl-shadow--16dp" );
-        $( this ).css( "margin", "8px" );
-    });
-*/
-
-
-
-
-
 
 
 

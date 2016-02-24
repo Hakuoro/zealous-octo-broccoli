@@ -45,35 +45,6 @@ Player.prototype.init = function (opts){
     this.say('playerUpdate', this.toJSON());
 };
 
-
-Player.prototype.update = function (){
-
-    //return true;
-
-    if (this.state == 1 && this.currentRival){
-
-        var rivalHp = this.currentRival.getDamage(this.damage());
-
-        if (rivalHp == 0){
-            // кирдык
-            this.state = 0;
-            this.killedRival();
-            this.say('killed', {});
-        }else{
-
-            this.say('rivalUpdate', this.currentRival.toJSON());
-        }
-
-        return true;
-    }
-
-
-    if (this.state  == 0 || !this.currentRival){
-        this.findRival();
-    }
-};
-
-
 Player.prototype.levelUp = function (){
 
     this.exp = 0;
@@ -88,6 +59,38 @@ Player.prototype.levelUp = function (){
 };
 
 Player.prototype.startBattle = function (){
+
+    console.log(this.state);
+    if (this.state  != 0 ){
+        return true;
+    }
+
+    if (!this.currentRival){
+        this.findRival();
+    }
+
+    this.state = 1;
+
+    var battleTime = Math.floor(this.currentRival.hp / this.dps * 1000) ;
+
+    this.say('startBattle', {
+        battleTime:battleTime,
+        rival:this.currentRival.toJSON()
+    });
+
+    var self = this;
+
+    var battleTimer = setTimeout(function () {
+
+        self.state = 0;
+        self.killedRival();
+        self.say('killed', {});
+
+    }, battleTime );
+
+};
+
+Player.prototype.damageRival = function (){
 
     if (this.state  != 1 || !this.currentRival){
         return true;
@@ -107,9 +110,10 @@ Player.prototype.startBattle = function (){
 
 };
 
+
 Player.prototype.killedRival = function (){
 
-    this.addExp()
+    this.addExp();
     this.findRival();
 };
 
@@ -136,7 +140,7 @@ Player.prototype.setConnection = function (connection){
 Player.prototype.findRival = function (){
     this.currentRival = new Orc({name:"Borg"});
     this.say('newRival', this.currentRival.toJSON());
-    this.state = 1;
+    //this.state = 1;
 };
 
 

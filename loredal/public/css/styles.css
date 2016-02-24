@@ -128,62 +128,8 @@ html, body {
     max-width: 1080px;
 }
 
-.loredal-charts {
-    -webkit-align-items: center;
-    -ms-flex-align: center;
-    -ms-grid-row-align: center;
-    align-items: center;
-}
 
-.loredal-chart:nth-child(1) {
-    color: #ACEC00;
-}
 
-.loredal-chart:nth-child(2) {
-    color: #00BBD6;
-}
-
-.loredal-chart:nth-child(3) {
-    color: #BA65C9;
-}
-
-.loredal-chart:nth-child(4) {
-    color: #EF3C79;
-}
-
-.loredal-graphs {
-    padding: 16px 32px;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-flex-direction: column;
-    -ms-flex-direction: column;
-    flex-direction: column;
-    -webkit-align-items: stretch;
-    -ms-flex-align: stretch;
-    align-items: stretch;
-}
-
-/* TODO: Find a proper solution to have the graphs
- * not float around outside their container in IE10/11.
- * Using a browserhacks.com solution for now.
- */
-_:-ms-input-placeholder, :root .loredal-graphs {
-    min-height: 664px;
-}
-
-_:-ms-input-placeholder, :root .loredal-graph {
-    max-height: 300px;
-}
-
-/* TODO end */
-.loredal-graph:nth-child(1) {
-    color: #00b9d8;
-}
-
-.loredal-graph:nth-child(2) {
-    color: #d9006e;
-}
 
 .loredal-cards {
     -webkit-align-items: flex-start;
@@ -193,8 +139,8 @@ _:-ms-input-placeholder, :root .loredal-graph {
     -webkit-align-content: flex-start;
     -ms-flex-line-pack: start;
     align-content: flex-start;
-    width: 600px;
-    min-height: 600px;
+    width: 200px;
+    min-height: 200px;
 }
 
 .loredal-cards .loredal-separator {
@@ -216,9 +162,9 @@ _:-ms-input-placeholder, :root .loredal-graph {
 }
 
 .loredal-updates .mdl-card__title {
-    min-height: 600px;
+    min-height: 200px;
     background-image: url('/images/grog.jpg');
-    background-position: 90% 100%;
+    background-position: 50% 20%;
     background-repeat: no-repeat;
 }
 
