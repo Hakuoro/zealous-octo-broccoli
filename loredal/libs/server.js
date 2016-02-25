@@ -33,6 +33,11 @@ server.prototype.start = function (){
                 token = message.name + '123asd';  // todo token generation
                 player = us.initUser(message.name, '');
 
+
+                app.locals.connections[token] = player.name;
+
+                player.init({conn:conn});
+
                 var send = {
                     f:'setT',
                     token:token,
@@ -40,9 +45,6 @@ server.prototype.start = function (){
                 };
 
                 conn.write(JSON.stringify(send));
-
-                app.locals.connections[token] = player.name;
-                player.init({conn:conn});
 
                 updatePlayerRef = setInterval(function() {
                     us.saveUser(player);
@@ -67,10 +69,6 @@ server.prototype.start = function (){
                     f:'forbidden1'
                 }));
                 return true;
-            }
-
-            if (message.f == 'startBattle'){
-                player.startBattle();
             }
 
         });
