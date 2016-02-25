@@ -10,3 +10,4 @@ atlassian*
 *.conf.js
 *.conf.json
 node_modules
+users

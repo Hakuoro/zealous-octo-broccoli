@@ -1,4 +1,7 @@
 
+
+
+
 var warehouse = function (player){
     this.player = player;
     this.maxCount = 100;

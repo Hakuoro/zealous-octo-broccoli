@@ -1,6 +1,3 @@
-var util = require('util');
-var Unit = require('./unit');
-var Orc = require('./rivals/orc');
 
 function Player (opts){
     this.name = opts.name || "Boris";
@@ -33,7 +30,6 @@ function Player (opts){
 
 }
 
-util.inherits(Player, Unit);
 
 module.exports = Player;
 
@@ -60,7 +56,6 @@ Player.prototype.levelUp = function (){
 
 Player.prototype.startBattle = function (){
 
-    console.log(this.state);
     if (this.state  != 0 ){
         return true;
     }

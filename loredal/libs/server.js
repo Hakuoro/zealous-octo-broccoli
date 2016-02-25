@@ -1,6 +1,5 @@
 var sockjs = require('sockjs');
 var sockjs_opts = {sockjs_url: "https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.0.3/sockjs.min.js"};
-
 var UserService = require('./userService');
 
 var server = function (app, httpServer){
@@ -79,10 +78,7 @@ server.prototype.start = function (){
         conn.on('close', function () {
             clearInterval(updatePlayerRef);
             //clearInterval(updatePlayerRef);
-            /*for (var ii = 0; ii < connections.length; ii++) {
-             connections[ii].write("User " + number + " has disconnected");
-             }
-             connections.splice(number - 1, 1);*/
+
         });
     });
 
