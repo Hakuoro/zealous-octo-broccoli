@@ -53,7 +53,7 @@ function Base(opts){
      * production per production interval
      * @type {*|number}
      */
-    this.production = opts.production || 10;
+    this.production = opts.production || 1;
 
 
     /**
@@ -67,6 +67,12 @@ function Base(opts){
      * @type {number}
      */
     this.state = opts.state || 0;
+
+    /**
+     *  building`s count
+     * @type {number}
+     */
+    this.count = opts.count || 1;
 
 
 
@@ -94,7 +100,8 @@ Base.prototype.toJSON = function (){
         prodInterval:this.prodInterval,
         currentProduction:this.currentProduction,
         production:this.production,
-        expMult:this.expMult
+        expMult:this.expMult,
+        count:this.count
     };
 
 };
@@ -134,10 +141,10 @@ Base.prototype.done = function (){
     this.state = 0;
     this.currentProduction = 0;
 
-    this.currentCapacity += this.production;
+    this.currentCapacity += this.production * this.count;
 
-    if (this.currentCapacity > this.maxCapacity) {
-        this.currentCapacity = this.maxCapacity;
+    if (this.currentCapacity > this.maxCapacity * this.count) {
+        this.currentCapacity = this.maxCapacity * this.count;
         return true;
     }
 
@@ -156,6 +163,7 @@ Base.prototype.process = function (){
 
         self.currentProduction += 1000;
 
+        console.log(self.currentProduction);
         if (self.currentProduction >= self.prodInterval){
             clearInterval(self.workCirckeRef);
             self.done();

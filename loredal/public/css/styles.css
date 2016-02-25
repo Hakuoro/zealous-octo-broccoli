@@ -128,9 +128,6 @@ html, body {
     max-width: 1080px;
 }
 
-
-
-
 .loredal-cards {
     -webkit-align-items: flex-start;
     -ms-flex-align: start;
@@ -161,11 +158,22 @@ html, body {
     font-size: 1em;
 }
 
-.loredal-updates .mdl-card__title {
+.loredal-card .mdl-card__title {
     min-height: 200px;
-    background-image: url('/images/grog.jpg');
     background-position: 50% 20%;
     background-repeat: no-repeat;
+}
+
+.house-card .mdl-card__title {
+    background-image: url('/images/house.jpg');
+}
+
+.farm-card .mdl-card__title {
+    background-image: url('/images/farm.jpg');
+}
+
+.mine-card .mdl-card__title {
+    background-image: url('/images/mine.jpg');
 }
 
 .loredal-cards .mdl-card__actions a {

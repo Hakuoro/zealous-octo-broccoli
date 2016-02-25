@@ -20,13 +20,13 @@ server.prototype.start = function (){
         var updateRef, updatePlayerRef = '';
         var us = new UserService({app:app});
 
+        var player = null;
+
         conn.on('data', function (message) {
 
             message = JSON.parse(message);
 
             console.log(message);
-
-            var player = null;
 
             if ( message.f == 'initPlayer' ){
 

@@ -13,8 +13,6 @@ Player.prototype.init = function (opts){
 
     this.house = new House(this);
 
-    console.log(this.house);
-
     this.house.start();
 
     this.say('playerUpdate', this.toJSON());
