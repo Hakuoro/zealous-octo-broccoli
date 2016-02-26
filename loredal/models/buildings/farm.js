@@ -1,82 +1,34 @@
+const util = require('util');
+const Building = require('./base');
 
-var farm = function (player){
+function Farm(player, opts) {
     this.player = player;
-    this.ticksToProcess = 100;
-    this.currentTicks = 0;
-    this.currentIntervals = 100;
-    this.updateRef = null;
-    this.resourceToProcess = 1;
-    this.processState = 0;
-    this.state = 0;
-};
+    //Building.call(this, {name:'Дом', prodInterval:5000});
+    Farm.super_.apply(this, [{name:'Дом', prodInterval:5000,production:0}]);
 
-var proto = farm.prototype;
+    this.farmersCount = opts.farmersCount || 0;
+}
 
-proto.update = function (conn){
+util.inherits(Farm, Building);
 
-    if (this.state == 0)
-        return 0;
+Farm.prototype.toJSON = function (){
+    var ret = Farm.super_.prototype.toJSON.apply(this, arguments);
 
-    this.currentTicks ++ ;
+    ret['farmersCount'] = this.farmersCount;
 
-    this.player.say('farmUpdate', this.getWorkStatus());
-
-    if (this.currentTicks > this.ticksToProcess){
-
-        this.iAmFull();
-        this.stop();
-    }
-
+    return ret;
 };
 
 
-proto.getWorkStatus = function(){
-    return {
-        state:this.state,
-        processState:this.processState,
-        progress: this.currentTicks/this.ticksToProcess
-    };
+Farm.prototype.process = function (){
+    this.player.emit('farmStart');
+    Farm.super_.prototype.process.apply(this, arguments);
 };
 
-proto.getResourse = function(){
-
-    if (this.isFull()) {
-        this.iAmEmpty();
-        return this.resourceToProcess;
-    }
-
-    return 0;
+Farm.prototype.done = function() {
+    Farm.super_.prototype.done.apply(this, arguments);
+    this.player.emit('farmDone');
 };
 
 
-proto.isFull = function(){
-    return this.processState;
-};
-
-proto.iAmFull = function(){
-
-    this.processState = 1;
-};
-
-proto.iAmEmpty = function(){
-
-    this.processState = 0;
-};
-
-proto.start = function (){
-
-    if (this.state > 0)
-        return true;
-
-    this.state = 1;
-    this.currentTicks = 0;
-};
-
-proto.stop = function (){
-
-    this.state = 0;
-    this.currentTicks = 0;
-    clearInterval(this.updateRef);
-};
-
-exports = module.exports = farm;
+exports = module.exports = Farm;

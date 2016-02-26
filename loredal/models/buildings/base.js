@@ -101,7 +101,8 @@ Base.prototype.toJSON = function (){
         currentProduction:this.currentProduction,
         production:this.production,
         expMult:this.expMult,
-        count:this.count
+        count:this.count,
+        state:this.state
     };
 
 };
@@ -163,7 +164,6 @@ Base.prototype.process = function (){
 
         self.currentProduction += 1000;
 
-        console.log(self.currentProduction);
         if (self.currentProduction >= self.prodInterval){
             clearInterval(self.workCirckeRef);
             self.done();

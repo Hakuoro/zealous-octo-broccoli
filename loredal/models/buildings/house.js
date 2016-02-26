@@ -10,17 +10,13 @@ function House(player) {
 util.inherits(House, Building);
 
 House.prototype.process = function (){
-
-    this.player.say('houseStart', this.toJSON());
-
+    this.player.emit('houseStart');
     House.super_.prototype.process.apply(this, arguments);
 };
 
-
 House.prototype.done = function() {
     House.super_.prototype.done.apply(this, arguments);
-    console.log(this.toJSON());
-    this.player.say('houseUpdate', this.toJSON());
+    this.player.emit('houseDone');
 };
 
 

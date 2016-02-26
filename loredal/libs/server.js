@@ -71,6 +71,11 @@ server.prototype.start = function (){
                 return true;
             }
 
+            if ( message.f == 'houseStart'){
+                player.house.start();
+            }
+
+
         });
 
         conn.on('close', function () {

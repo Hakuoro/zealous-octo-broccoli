@@ -1,4 +1,3 @@
-
 $(document).ready(function() {
 
     $('.loredal-layout').hide();
@@ -9,9 +8,7 @@ $(document).ready(function() {
 
         var sock = new SockJS('http://newlke.ru:3000/chat');
 
-        var state = 0;
         var token = null;
-
 
         var jq =  $;
 
@@ -36,11 +33,6 @@ $(document).ready(function() {
 
             message = JSON.parse(e.data);
 
-            var state, houseCounter,
-            houseUpdate,
-            progressUpdate,
-            progress, houseTurn, houseTime;
-
             console.log(message);
 
             if (message.f == 'setT'){
@@ -52,47 +44,35 @@ $(document).ready(function() {
                 jq('.login-div').hide();
                 jq('.loredal-layout').show();
 
-                playerUpdate(message.player);
+                setTimeout(function(){
+                    sock.send(JSON.stringify({f:'houseStart', t:token}));
+                }, 1000);
 
-            }else if (message.f == 'houseUpdate'){
+            }else if (message.f == 'houseDone'){
+
+                var house = message.data;
+
+                houseDone(house);
+
+                if (house.currentCapacity  < (house.maxCapacity*house.count)){
+
+                    setTimeout(function(){
+                        sock.send(JSON.stringify({f:'houseStart', t:token}));
+                    }, 1000);
+                }
 
             }else if (message.f == 'houseStart'){
-
-                state = 1;
-
-                var houseProgress = document.querySelector('.house-progress').MaterialProgress;
-                var farm = message.data;
-
-                houseProgress.setProgress(0);
-
-                houseUpdate = 1000;
-
-                houseTime = farm.prodInterval - farm.currentProduction;
-
-                houseCounter = 0;
-
-                progressUpdate = houseUpdate/houseTime*100;
-                progress = 0;
-
-                houseTurn = setInterval(function(){
-                    if(houseCounter <= houseTime) {
-                        houseCounter += houseUpdate;
-                        progress += progressUpdate;
-                        houseProgress.setProgress(progress);
-                    } else {
-                        clearInterval(houseTurn);
-                        state = 0;
-                        houseProgress.setProgress(0);
-                        progress = 0;
-                    }
-                }, houseUpdate);
+                houseStart(message.data);
             }
         };
 
 
-       /* $(".rival-card").click(function(){
 
-            if (state == 0) {
+
+
+        $(".farm-card").click(function(){
+
+            if (houseState == 0) {
 
                 jq(this).toggleClass("mdl-shadow--8dp").toggleClass("mdl-shadow--4dp").addClass("rival-card-active");
 
@@ -103,7 +83,7 @@ $(document).ready(function() {
 
                 sock.send(JSON.stringify(data));
             }
-        });*/
+        });
 
 
 

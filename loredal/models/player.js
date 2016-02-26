@@ -1,9 +1,14 @@
+const EventEmitter = require('events');
+const util = require('util');
 var House = require('./buildings/house');
+
 function Player (opts){
     this.name = opts.name || "Boris";
     this.house = null;
 }
 
+
+util.inherits(Player, EventEmitter);
 
 module.exports = Player;
 
@@ -13,9 +18,9 @@ Player.prototype.init = function (opts){
 
     this.house = new House(this);
 
-    this.house.start();
+    //this.house.start();
 
-    this.say('playerUpdate', this.toJSON());
+    //this.say('playerUpdate', this.toJSON());
 };
 
 Player.prototype.setConnection = function (connection){
@@ -47,3 +52,11 @@ Player.prototype.free = function (){
     this.house.player = null;
 
 };
+
+Player.prototype.on('houseDone', function() {
+    this.say('houseDone', this.house.toJSON());
+});
+
+Player.prototype.on('houseStart', function() {
+    this.say('houseStart', this.house.toJSON());
+});
