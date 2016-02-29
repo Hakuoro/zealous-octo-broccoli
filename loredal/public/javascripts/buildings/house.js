@@ -3,14 +3,20 @@ var houseState = 0, houseCounter,
     progressHouseUpdate,
     progressHouse, houseTurn, houseTime;
 
-var houseDone = function(house){
+var houseUpdate = function(house){
 
-    clearInterval(houseTurn);
     document.querySelector('.house-progress').MaterialProgress.setProgress(0);
     $('.mdl-card__title-count').text(house.count);
     $('.house-description').html(
         'Домов 1<br>Населения: '+house.currentCapacity+'/'+(house.maxCapacity*house.count)+'<br>Рост: 1'
     );
+};
+
+
+var houseDone = function(house){
+
+    clearInterval(houseTurn);
+    houseUpdate(house);
 
     houseState = 0;
     progressHouse = 0;
@@ -18,6 +24,12 @@ var houseDone = function(house){
 };
 
 var houseStart = function(house){
+
+    houseUpdate(house);
+
+    if (houseState == 1){
+        return true;
+    }
 
     houseState = 1;
 

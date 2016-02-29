@@ -11,7 +11,7 @@ function Base(opts){
      *  building current capacity
      * @type {number}
      */
-    this.currentCapacity = opts.currentCapacity || 1;
+    this.currentCapacity = opts.currentCapacity || 0;
 
     /**
      * building max capacity
@@ -142,14 +142,26 @@ Base.prototype.done = function (){
     this.state = 0;
     this.currentProduction = 0;
 
-    this.currentCapacity += this.production * this.count;
+    this.currentCapacity += this.getProduction();
 
-    if (this.currentCapacity > this.maxCapacity * this.count) {
-        this.currentCapacity = this.maxCapacity * this.count;
+    if (this.currentCapacity > this.getCapacity()) {
+        this.currentCapacity = this.getCapacity();
         return true;
     }
 
     this.addExp(this.productionExp);
+};
+
+
+Base.prototype.getProduction = function (){
+
+    return this.production * this.count;
+};
+
+
+Base.prototype.getCapacity = function (){
+
+    return this.maxCapacity * this.count;
 };
 
 /**

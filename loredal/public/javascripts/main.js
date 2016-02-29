@@ -45,7 +45,7 @@ $(document).ready(function() {
                 jq('.loredal-layout').show();
 
                 setTimeout(function(){
-                    sock.send(JSON.stringify({f:'houseStart', t:token}));
+                    sock.send(JSON.stringify({f:'startAll', t:token}));
                 }, 1000);
 
             }else if (message.f == 'houseDone'){
@@ -63,26 +63,21 @@ $(document).ready(function() {
 
             }else if (message.f == 'houseStart'){
                 houseStart(message.data);
+            }else if (message.f == 'addFarmer'){
+                farmStart(message.data)
             }
         };
 
 
 
-
-
         $(".farm-card").click(function(){
 
-            if (houseState == 0) {
-
-                jq(this).toggleClass("mdl-shadow--8dp").toggleClass("mdl-shadow--4dp").addClass("rival-card-active");
-
                 var data = {
-                    f: 'starthouse',
+                    f: 'addFarmer',
                     t: token
                 };
 
                 sock.send(JSON.stringify(data));
-            }
         });
 
 

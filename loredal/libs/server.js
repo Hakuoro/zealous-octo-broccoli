@@ -71,10 +71,20 @@ server.prototype.start = function (){
                 return true;
             }
 
+            if ( message.f == 'startAll'){
+                player.house.start();
+                player.farm.start();
+            }
+
             if ( message.f == 'houseStart'){
                 player.house.start();
             }
 
+
+
+            if ( message.f == 'addFarmer'){
+                player.addFarmer();
+            }
 
         });
 

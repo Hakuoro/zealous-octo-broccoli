@@ -4,12 +4,15 @@ const Building = require('./base');
 function House(player) {
     this.player = player;
     //Building.call(this, {name:'Дом', prodInterval:5000});
-    House.super_.apply(this, [{name:'Дом', prodInterval:5000}]);
+    House.super_.apply(this, [{name:'Дом', prodInterval:5000,currentCapacity:5}]);
 }
 
 util.inherits(House, Building);
 
 House.prototype.process = function (){
+
+    console.log('house started');
+
     this.player.emit('houseStart');
     House.super_.prototype.process.apply(this, arguments);
 };

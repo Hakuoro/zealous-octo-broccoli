@@ -1,10 +1,12 @@
 const EventEmitter = require('events');
 const util = require('util');
 var House = require('./buildings/house');
+var Farm = require('./buildings/farm');
 
 function Player (opts){
-    this.name = opts.name || "Boris";
-    this.house = null;
+    this.name   = opts.name || "Boris";
+    this.house  = null;
+    this.farm   = null;
 }
 
 
@@ -16,9 +18,8 @@ Player.prototype.init = function (opts){
 
     this.setConnection(opts.conn);
 
-    this.house = new House(this);
-
-    //this.house.start();
+    this.house  = new House(this);
+    this.farm   = new Farm(this, {});
 
     //this.say('playerUpdate', this.toJSON());
 };
@@ -41,7 +42,8 @@ Player.prototype.toJSON = function (){
 
     return {
         name:this.name,
-        house:this.house?this.house.toJSON():{}
+        house:this.house?this.house.toJSON():{},
+        farm:this.farm?this.farm.toJSON():{}
 
     };
 
@@ -49,7 +51,8 @@ Player.prototype.toJSON = function (){
 
 Player.prototype.free = function (){
 
-    this.house.player = null;
+    this.house.player   = null;
+    this.farm.player    = null;
 
 };
 
@@ -60,3 +63,20 @@ Player.prototype.on('houseDone', function() {
 Player.prototype.on('houseStart', function() {
     this.say('houseStart', this.house.toJSON());
 });
+
+
+Player.prototype.addFarmer = function() {
+
+    if (this.house.currentCapacity <= 0 || this.farm.farmersCount >= this.farm.getMaxFarmersCount()){
+        return false;
+    }
+
+    this.house.currentCapacity --;
+    this.farm.farmersCount ++;
+
+    console.log(this.farm.toJSON());
+
+    this.say('addFarmer', this.farm.toJSON());
+
+    this.farm.start();
+};
