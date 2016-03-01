@@ -36,27 +36,48 @@ Farm.prototype.toJSON = function (){
     return ret;
 };
 
+/**
+ *
+ * @returns {boolean}
+ */
 Farm.prototype.process = function (){
 
-    if (this.farmersCount == 0)
+    console.log('farm processed');
+    console.log(this.farmersCount);
+
+
+
+    if (this.farmersCount == 0) {
+        this.state = 0;
         return true;
+    }
 
-    console.log('farm started');
-
-    this.player.emit('farmStart');
+    this.player.emit('farmStarted');
     Farm.super_.prototype.process.apply(this, arguments);
 };
 
+/**
+ *
+ */
 Farm.prototype.done = function() {
+    console.log('farm done');
     Farm.super_.prototype.done.apply(this, arguments);
     this.player.emit('farmDone');
 };
 
+/**
+ *
+ * @returns {number}
+ */
 Farm.prototype.getProduction = function (){
 
     return this.production * this.count * this.farmersCount * this.farmerCoeff;
 };
 
+/**
+ *
+ * @returns {number}
+ */
 Farm.prototype.getMaxFarmersCount = function (){
 
     return this.count * this.maxFarmersCount;

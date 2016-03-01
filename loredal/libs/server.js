@@ -80,7 +80,9 @@ server.prototype.start = function (){
                 player.house.start();
             }
 
-
+            if ( message.f == 'farmStart'){
+                player.farm.start();
+            }
 
             if ( message.f == 'addFarmer'){
                 player.addFarmer();

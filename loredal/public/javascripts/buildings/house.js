@@ -37,7 +37,7 @@ var houseStart = function(house){
 
     houseProgress.setProgress(0);
 
-    houseTick = 1000;
+    houseTick = 100;
 
     houseTime = house.prodInterval - house.currentProduction - houseTick;
 

@@ -61,10 +61,25 @@ $(document).ready(function() {
                     }, 1000);
                 }
 
-            }else if (message.f == 'houseStart'){
+            }else if (message.f == 'houseStarted'){
                 houseStart(message.data);
             }else if (message.f == 'addFarmer'){
+                farmUpdate(message.data)
+            }else if (message.f == 'farmStarted'){
                 farmStart(message.data)
+            }else if (message.f == 'farmDone'){
+
+                var farm = message.data;
+
+                farmDone(farm);
+
+                if (farm.currentCapacity  < (farm.maxCapacity*farm.count) && farm.farmersCount > 0){
+
+                    setTimeout(function(){
+                        sock.send(JSON.stringify({f:'farmStart', t:token}));
+                    }, 1000);
+                }
+
             }
         };
 

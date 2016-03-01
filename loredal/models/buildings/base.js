@@ -192,7 +192,7 @@ Base.prototype.process = function (){
  */
 Base.prototype.start = function (){
 
-    if (this.state == 1)
+    if (this.state == 1 || this.currentCapacity >= this.getCapacity())
         return true;
 
     this.state = 1;

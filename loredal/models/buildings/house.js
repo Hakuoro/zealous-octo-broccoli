@@ -13,7 +13,7 @@ House.prototype.process = function (){
 
     console.log('house started');
 
-    this.player.emit('houseStart');
+    this.player.emit('houseStarted');
     House.super_.prototype.process.apply(this, arguments);
 };
 

@@ -60,8 +60,16 @@ Player.prototype.on('houseDone', function() {
     this.say('houseDone', this.house.toJSON());
 });
 
-Player.prototype.on('houseStart', function() {
-    this.say('houseStart', this.house.toJSON());
+Player.prototype.on('houseStarted', function() {
+    this.say('houseStarted', this.house.toJSON());
+});
+
+Player.prototype.on('farmStarted', function() {
+    this.say('farmStarted', this.farm.toJSON());
+});
+
+Player.prototype.on('farmDone', function() {
+    this.say('farmDone', this.farm.toJSON());
 });
 
 
@@ -73,8 +81,6 @@ Player.prototype.addFarmer = function() {
 
     this.house.currentCapacity --;
     this.farm.farmersCount ++;
-
-    console.log(this.farm.toJSON());
 
     this.say('addFarmer', this.farm.toJSON());
 
