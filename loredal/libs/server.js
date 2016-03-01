@@ -74,6 +74,7 @@ server.prototype.start = function (){
             if ( message.f == 'startAll'){
                 player.house.start();
                 player.farm.start();
+                player.mine.start();
             }
 
             if ( message.f == 'houseStart'){
@@ -83,16 +84,20 @@ server.prototype.start = function (){
             if ( message.f == 'farmStart'){
                 player.farm.start();
             }
+            if ( message.f == 'mineStart'){
+                player.mine.start();
+            }
+
 
             if ( message.f == 'addWorker'){
 
                 switch (message.b) {
                     case 'farm':
                         player.addFarmer();
-                        break
+                        break;
                     case 'mine':
                         player.addMiner();
-                        break
+                        break;
                     default:
                         return true;
                 }

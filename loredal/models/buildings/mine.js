@@ -15,6 +15,9 @@ util.inherits(Mine, Building);
  */
 Mine.prototype.process = function (){
 
+    console.log('mine processed');
+    console.log(this.workersCount);
+
     if (this.workersCount == 0) {
         this.state = 0;
         return true;

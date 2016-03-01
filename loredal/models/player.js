@@ -76,6 +76,15 @@ Player.prototype.on('farmDone', function() {
 });
 
 
+Player.prototype.on('mineStarted', function() {
+    this.say('mineStarted', this.mine.toJSON());
+});
+
+Player.prototype.on('mineDone', function() {
+    this.say('mineDone', this.mine.toJSON());
+});
+
+
 Player.prototype.addFarmer = function() {
 
     if (this.house.currentCapacity <= 0 || this.farm.workersCount >= this.farm.getMaxWorkersCount()){
