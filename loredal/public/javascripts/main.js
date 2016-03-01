@@ -35,51 +35,68 @@ $(document).ready(function() {
 
             console.log(message);
 
-            if (message.f == 'setT'){
+            if (message.f == 'setT') {
                 token = message.token;
 
-                Cookies.set('token', token, { expires: 20 });
-                Cookies.set('name', message.player.name, { expires: 20 });
+                Cookies.set('token', token, {expires: 20});
+                Cookies.set('name', message.player.name, {expires: 20});
 
                 jq('.login-div').hide();
                 jq('.loredal-layout').show();
 
-                setTimeout(function(){
-                    sock.send(JSON.stringify({f:'startAll', t:token}));
+                setTimeout(function () {
+                    sock.send(JSON.stringify({f: 'startAll', t: token}));
                 }, 1000);
 
-            }else if (message.f == 'houseDone'){
+            } else if (message.f == 'houseDone') {
 
                 var house = message.data;
 
                 houseDone(house);
 
-                if (house.currentCapacity  < (house.maxCapacity*house.count)){
+                if (house.currentCapacity < (house.maxCapacity * house.count)) {
 
-                    setTimeout(function(){
-                        sock.send(JSON.stringify({f:'houseStart', t:token}));
+                    setTimeout(function () {
+                        sock.send(JSON.stringify({f: 'houseStart', t: token}));
                     }, 1000);
                 }
 
-            }else if (message.f == 'houseStarted'){
-                houseStart(message.data);
-            }else if (message.f == 'addFarmer'){
+            } else if (message.f == 'houseStarted') {
+                houseStarted(message.data);
+            } else if (message.f == 'addFarmer') {
                 farmUpdate(message.data)
-            }else if (message.f == 'farmStarted'){
-                farmStart(message.data)
-            }else if (message.f == 'farmDone'){
+            } else if (message.f == 'farmStarted') {
+                farmStarted(message.data)
+            } else if (message.f == 'farmDone') {
 
                 var farm = message.data;
 
                 farmDone(farm);
 
-                if (farm.currentCapacity  < (farm.maxCapacity*farm.count) && farm.farmersCount > 0){
+                if (farm.currentCapacity < (farm.maxCapacity * farm.count) && farm.workersCount > 0) {
 
-                    setTimeout(function(){
-                        sock.send(JSON.stringify({f:'farmStart', t:token}));
+                    setTimeout(function () {
+                        sock.send(JSON.stringify({f: 'farmStart', t: token}));
                     }, 1000);
                 }
 
+            } else if (message.f == 'mineDone') {
+
+                var mine = message.data;
+
+                mineDone(mine);
+
+                if (mine.currentCapacity < (mine.maxCapacity * mine.count) && mine.workersCount > 0) {
+
+                    setTimeout(function () {
+                        sock.send(JSON.stringify({f: 'mineStart', t: token}));
+                    }, 1000);
+                }
+
+            } else if (message.f == 'addMiner') {
+                mineUpdate(message.data)
+            } else if (message.f == 'mineStarted') {
+                mineStarted(message.data)
             }
         };
 
@@ -88,7 +105,8 @@ $(document).ready(function() {
         $(".farm-card").click(function(){
 
                 var data = {
-                    f: 'addFarmer',
+                    f: 'addWorker',
+                    b: 'farm',
                     t: token
                 };
 
@@ -97,18 +115,26 @@ $(document).ready(function() {
 
 
 
+        $(".mine-card").click(function(){
+
+            var data = {
+                f: 'addWorker',
+                b: 'mine',
+                t: token
+            };
+
+            sock.send(JSON.stringify(data));
+        });
+
 
 
     };
 
     var playerUpdate = function(player){
 
-        $('.player-name').text(player.name);
-        $('.player-level').text(player.level);
-        $('.player-dps').text(player.dps);
-        $('.player-click').text(player.clickDamage);
+        houseUpdate(player.house);
+        farmUpdate(player.farm);
 
-        document.querySelector('.player-exp').MaterialProgress.setProgress(player.exp/player.needExp*100);
     };
 
 

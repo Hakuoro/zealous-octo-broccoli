@@ -84,8 +84,21 @@ server.prototype.start = function (){
                 player.farm.start();
             }
 
-            if ( message.f == 'addFarmer'){
-                player.addFarmer();
+            if ( message.f == 'addWorker'){
+
+                switch (message.b) {
+                    case 'farm':
+                        player.addFarmer();
+                        break
+                    case 'mine':
+                        player.addMiner();
+                        break
+                    default:
+                        return true;
+                }
+
+
+
             }
 
         });

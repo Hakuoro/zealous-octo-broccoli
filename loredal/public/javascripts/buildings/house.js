@@ -23,7 +23,7 @@ var houseDone = function(house){
     houseCounter = 0;
 };
 
-var houseStart = function(house){
+var houseStarted = function(house){
 
     houseUpdate(house);
 

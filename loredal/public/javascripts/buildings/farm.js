@@ -8,7 +8,7 @@ var farmUpdate = function(farm){
 
     $('.mdl-card__title-count').text(farm.count);
     $('.farm-description').html(
-        'Фермеров: '+farm.farmersCount+ '/'+(farm.maxFarmersCount*farm.count)+'<br>Еды: '+farm.currentCapacity+'/'+(farm.maxCapacity*farm.count)+'<br>Рост: ' + (farm.farmersCount * farm.production)
+        'Фермеров: '+farm.workersCount+ '/'+(farm.maxWorkersCount*farm.count)+'<br>Еды: '+farm.currentCapacity+'/'+(farm.maxCapacity*farm.count)+'<br>Рост: ' + (farm.workersCount * farm.production)
     );
 };
 
@@ -24,7 +24,7 @@ var farmDone = function(farm){
     farmCounter = 0;
 };
 
-var farmStart = function(farm){
+var farmStarted = function(farm){
 
     if (farmState == 1) {
         return true;

@@ -74,6 +74,23 @@ function Base(opts){
      */
     this.count = opts.count || 1;
 
+    /**
+     *  workers count
+     * @type {number}
+     */
+    this.workersCount = opts.workersCount || 0;
+
+    /**
+     *  max farmers count
+     * @type {number}
+     */
+    this.maxWorkersCount = opts.maxWorkersCount || 10;
+    /**
+     *  multiply for calculating production
+     * @type {number}
+     */
+    this.workersCoeff = opts.workersCoeff || 1;
+
 
 
 
@@ -102,6 +119,9 @@ Base.prototype.toJSON = function (){
         production:this.production,
         expMult:this.expMult,
         count:this.count,
+        workersCount:this.workersCount,
+        maxWorkersCount:this.maxWorkersCount,
+        workersCoeff:this.workersCoeff,
         state:this.state
     };
 
@@ -162,6 +182,24 @@ Base.prototype.getProduction = function (){
 Base.prototype.getCapacity = function (){
 
     return this.maxCapacity * this.count;
+};
+
+/**
+ *
+ * @returns {number}
+ */
+Base.prototype.getMaxWorkersCount = function (){
+
+    return this.count * this.maxWorkersCount;
+};
+
+/**
+ *
+ * @returns {number}
+ */
+Base.prototype.getProduction = function (){
+
+    return this.production * this.count * this.workersCount * this.workersCoeff;
 };
 
 /**
