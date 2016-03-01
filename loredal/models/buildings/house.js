@@ -4,7 +4,7 @@ const Building = require('./base');
 function House(player) {
     this.player = player;
     //Building.call(this, {name:'Дом', prodInterval:5000});
-    House.super_.apply(this, [{name:'Дом', prodInterval:5000,currentCapacity:5}]);
+    House.super_.apply(this, [{name:'Дом', prodInterval:5000,currentCapacity:5,workersCount:1}]);
 }
 
 util.inherits(House, Building);

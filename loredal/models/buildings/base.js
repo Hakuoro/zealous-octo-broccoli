@@ -173,12 +173,6 @@ Base.prototype.done = function (){
 };
 
 
-Base.prototype.getProduction = function (){
-
-    return this.production * this.count;
-};
-
-
 Base.prototype.getCapacity = function (){
 
     return this.maxCapacity * this.count;

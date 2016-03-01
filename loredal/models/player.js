@@ -86,6 +86,7 @@ Player.prototype.addFarmer = function() {
     this.farm.workersCount ++;
 
     this.say('addFarmer', this.farm.toJSON());
+    this.say('houseUpdate', this.house.toJSON());
 
     this.farm.start();
 };
@@ -100,6 +101,7 @@ Player.prototype.addMiner = function() {
     this.mine.workersCount ++;
 
     this.say('addMiner', this.mine.toJSON());
+    this.say('houseUpdate', this.house.toJSON());
 
     this.mine.start();
 };

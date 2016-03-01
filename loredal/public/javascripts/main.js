@@ -6,7 +6,7 @@ $(document).ready(function() {
 
     var main = function(playerName){
 
-        var sock = new SockJS('http://newlke.ru:3000/chat');
+        var sock = new SockJS('http://loredal.ru:3000/chat');
 
         var token = null;
 
@@ -63,10 +63,16 @@ $(document).ready(function() {
 
             } else if (message.f == 'houseStarted') {
                 houseStarted(message.data);
+            } else if (message.f == 'houseUpdate') {
+                houseUpdate(message.data)
             } else if (message.f == 'addFarmer') {
                 farmUpdate(message.data)
             } else if (message.f == 'farmStarted') {
                 farmStarted(message.data)
+            } else if (message.f == 'farmUpdate') {
+                farmUpdate(message.data)
+            } else if (message.f == 'mineUpdate') {
+                mineUpdate(message.data)
             } else if (message.f == 'farmDone') {
 
                 var farm = message.data;
@@ -147,39 +153,12 @@ $(document).ready(function() {
         $(".enter-button").click(function(){
             var playerName = $("#playerName").val();
             if (playerName){
+
                 main(playerName);
             }
+            return false;
         });
     }
 
 
-
-
-  /*  $(".rival-card").click(function(){
-
-        var data = {
-            f:'startBattle',
-            t:token
-        };
-
-        sock.send(JSON.stringify(data));
-
-    });*/
-
 });
-
-
-
-
-  /*  document.querySelector('#rival-card').onclick = function() {
-
-
-
-
-        var data = {
-            f:'startBattle',
-            t:token
-        };
-
-        sock.send(JSON.stringify(data));
-    };*/
