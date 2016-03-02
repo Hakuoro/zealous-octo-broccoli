@@ -1,38 +1,54 @@
 const util = require('util');
 const Building = require('./base');
+const Warehouse = require('./warehouse');
 
-function Mine(player, opts) {
+function Forge(player, opts) {
     this.player = player;
     //Building.call(this, {name:'Дом', prodInterval:5000});
-    Mine.super_.apply(this, [{name:'Шахта', prodInterval:5000,production:0,currentCapacity:0}]);
+    Forge.super_.apply(this, [{name:'Кузня', prodInterval:5000,production:0,currentCapacity:0}]);
+
+    this.storage = new Warehouse();
 }
 
-util.inherits(Mine, Building);
+util.inherits(Forge, Building);
 
 /**
  *
  * @returns {boolean}
  */
-Mine.prototype.process = function (){
-
-    console.log('mine processed');
-    console.log(this.workersCount);
+Forge.prototype.process = function (){
 
     if (this.workersCount == 0) {
         this.state = 0;
         return true;
     }
 
-    this.player.emit('mineStarted');
+    this.player.emit('forgeStarted');
     Mine.super_.prototype.process.apply(this, arguments);
 };
 
+
 /**
- *
+ *  done production process
+ * @returns {boolean}
  */
-Mine.prototype.done = function() {
-    Mine.super_.prototype.done.apply(this, arguments);
-    this.player.emit('mineDone');
+Forge.prototype.done = function (){
+
+    this.state = 0;
+    this.currentProduction = 0;
+
+    this.currentCapacity += this.getProduction();
+
+    if (this.currentCapacity > this.getCapacity()) {
+        this.currentCapacity = this.getCapacity();
+        return true;
+    }
+
+    this.addExp(this.productionExp);
+
+    this.player.emit('forgeDone');
 };
 
-exports = module.exports = Mine;
+
+
+exports = module.exports = Forge;

@@ -15,13 +15,14 @@ util.inherits(Mine, Building);
  */
 Mine.prototype.process = function (){
 
-    console.log('mine processed');
-    console.log(this.workersCount);
-
-    if (this.workersCount == 0) {
+    if (this.workersCount == 0 || this.player.farm.currentCapacity < this.workersCount) {
         this.state = 0;
         return true;
     }
+
+    this.player.farm.currentCapacity -= this.workersCount;
+    this.player.farm.start();
+
 
     this.player.emit('mineStarted');
     Mine.super_.prototype.process.apply(this, arguments);
