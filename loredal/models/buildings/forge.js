@@ -8,6 +8,8 @@ function Forge(player, opts) {
     Forge.super_.apply(this, [{name:'Кузня', prodInterval:5000,production:0,currentCapacity:0}]);
 
     this.storage = new Warehouse();
+
+    this.result = ['cuirass', 'helmet', 'arms', 'legs', 'sword'];
 }
 
 util.inherits(Forge, Building);
@@ -18,10 +20,14 @@ util.inherits(Forge, Building);
  */
 Forge.prototype.process = function (){
 
-    if (this.workersCount == 0) {
+    if (this.workersCount == 0 || this.player.mine.currentCapacity < this.workersCount) {
         this.state = 0;
         return true;
     }
+
+    this.player.mine.currentCapacity -= this.workersCount;
+    this.player.mine.start();
+
 
     this.player.emit('forgeStarted');
     Mine.super_.prototype.process.apply(this, arguments);
@@ -37,12 +43,16 @@ Forge.prototype.done = function (){
     this.state = 0;
     this.currentProduction = 0;
 
-    this.currentCapacity += this.getProduction();
+    var prod =  this.getProduction();
+    var i;
 
-    if (this.currentCapacity > this.getCapacity()) {
-        this.currentCapacity = this.getCapacity();
-        return true;
+    var result = null;
+
+    for (i = 0; i < prod; i++) {
+        result = this.result[randomIntInc(0, this.result.length)];
+        this.storage.put(result);
     }
+
 
     this.addExp(this.productionExp);
 
@@ -51,4 +61,11 @@ Forge.prototype.done = function (){
 
 
 
+
+
 exports = module.exports = Forge;
+
+
+function randomIntInc (low, high) {
+    return Math.floor(Math.random() * (high - low) + low);
+}
