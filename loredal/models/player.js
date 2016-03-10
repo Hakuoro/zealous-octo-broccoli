@@ -9,7 +9,7 @@ function Player (opts){
     this.name   = opts.name || "Boris";
     this.house  = null;
     this.farm   = null;
-    this.ьшту   = null;
+    this.forge   = null;
 }
 
 
@@ -153,4 +153,20 @@ Player.prototype.addMiner = function() {
     this.say('houseUpdate', this.house.toJSON());
 
     this.mine.start();
+};
+
+Player.prototype.addBlacksmith = function() {
+
+    if (this.house.currentCapacity <= 0 || this.forge.workersCount >= this.forge.getMaxWorkersCount()){
+        return false;
+    }
+
+    this.house.currentCapacity --;
+    this.house.start();
+    this.forge.workersCount ++;
+
+    this.say('addBlacksmith', this.forge.toJSON());
+    this.say('houseUpdate', this.house.toJSON());
+
+    this.forge.start();
 };

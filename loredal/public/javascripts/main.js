@@ -71,8 +71,6 @@ $(document).ready(function() {
                 farmStarted(message.data)
             } else if (message.f == 'farmUpdate') {
                 farmUpdate(message.data)
-            } else if (message.f == 'mineUpdate') {
-                mineUpdate(message.data)
             } else if (message.f == 'farmDone') {
 
                 var farm = message.data;
@@ -86,6 +84,8 @@ $(document).ready(function() {
                     }, 1000);
                 }
 
+            } else if (message.f == 'mineUpdate') {
+                mineUpdate(message.data)
             } else if (message.f == 'mineDone') {
 
                 var mine = message.data;
@@ -103,6 +103,25 @@ $(document).ready(function() {
                 mineUpdate(message.data)
             } else if (message.f == 'mineStarted') {
                 mineStarted(message.data)
+            } else if (message.f == 'addBlacksmith') {
+                forgeUpdate(message.data)
+            } else if (message.f == 'forgeUpdate') {
+                forgeUpdate(message.data)
+            } else if (message.f == 'forgeDone') {
+
+                var forge = message.data;
+
+                forgeDone(forge);
+
+                if (forge.currentCapacity < (forge.maxCapacity * forge.count) && forge.workersCount > 0) {
+
+                    setTimeout(function () {
+                        sock.send(JSON.stringify({f: 'forgeStart', t: token}));
+                    }, 1000);
+                }
+
+            } else if (message.f == 'forgeStarted') {
+                forgeStarted(message.data)
             }
         };
 
@@ -126,6 +145,17 @@ $(document).ready(function() {
             var data = {
                 f: 'addWorker',
                 b: 'mine',
+                t: token
+            };
+
+            sock.send(JSON.stringify(data));
+        });
+
+        $(".forge-card").click(function(){
+
+            var data = {
+                f: 'addWorker',
+                b: 'forge',
                 t: token
             };
 

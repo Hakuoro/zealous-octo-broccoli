@@ -178,6 +178,10 @@ html, body {
     background-image: url('/images/mine.jpg');
 }
 
+.forge-card .mdl-card__title {
+    background-image: url('/images/mine.jpg');
+}
+
 .loredal-cards .mdl-card__actions a {
     color: #00BCD4;
     text-decoration: none;

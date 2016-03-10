@@ -4,33 +4,33 @@
  * @constructor
  */
 function Warehouse(opts) {
-    this.storage = opts || {};
+    this.store = opts || {};
 }
 
 
 
 Warehouse.prototype.get = function(name, count) {
 
-    if (typeof(this.storage['name'] == 'undefined'))
+    if (typeof(this.store['name'] == 'undefined'))
         return 0;
 
-    if (this.storage['name'] < count){
+    if (this.store['name'] < count){
 
-        count = this.storage['name'];
-        this.storage['name'] = 0;
+        count = this.store['name'];
+        this.store['name'] = 0;
         return count;
 
     }
 
 
-    this.storage['name'] -= count;
+    this.store['name'] -= count;
 
     return count;
 };
 
 Warehouse.prototype.put = function(name, count) {
 
-    this.storage['name'] += count;
+    this.store['name'] += count;
 };
 
 Warehouse.prototype.put = function(name) {
@@ -39,6 +39,10 @@ Warehouse.prototype.put = function(name) {
 
 Warehouse.prototype.get = function(name) {
     this.get(name, 1);
+};
+
+Warehouse.prototype.toJSON = function(name) {
+    return this.store;
 };
 
 

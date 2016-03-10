@@ -98,6 +98,9 @@ server.prototype.start = function (){
                     case 'mine':
                         player.addMiner();
                         break;
+                    case 'forge':
+                        player.addBlacksmith();
+                        break;
                     default:
                         return true;
                 }

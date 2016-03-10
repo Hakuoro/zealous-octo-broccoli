@@ -7,9 +7,11 @@ function Forge(player, opts) {
     //Building.call(this, {name:'Дом', prodInterval:5000});
     Forge.super_.apply(this, [{name:'Кузня', prodInterval:5000,production:0,currentCapacity:0}]);
 
-    this.storage = new Warehouse();
+    this.warehouse = new Warehouse();
 
     this.result = ['cuirass', 'helmet', 'arms', 'legs', 'sword'];
+
+    this.resultCounter = 0;
 }
 
 util.inherits(Forge, Building);
@@ -30,7 +32,7 @@ Forge.prototype.process = function (){
 
 
     this.player.emit('forgeStarted');
-    Mine.super_.prototype.process.apply(this, arguments);
+    Forge.super_.prototype.process.apply(this, arguments);
 };
 
 
@@ -46,26 +48,27 @@ Forge.prototype.done = function (){
     var prod =  this.getProduction();
     var i;
 
-    var result = null;
+    this.warehouse.put(this.result[this.resultCounter]);
 
-    for (i = 0; i < prod; i++) {
-        result = this.result[randomIntInc(0, this.result.length)];
-        this.storage.put(result);
+
+    this.resultCounter ++;
+
+    if (this.resultCounter >= this.result.length) {
+        this.resultCounter = 0;
     }
-
 
     this.addExp(this.productionExp);
 
     this.player.emit('forgeDone');
 };
 
+Forge.prototype.toJSON = function(name) {
 
+    var data = Forge.super_.prototype.toJSON.apply(this, arguments);
 
+    data['warehouse'] = this.warehouse.toJSON();
 
+    return data;
+};
 
 exports = module.exports = Forge;
-
-
-function randomIntInc (low, high) {
-    return Math.floor(Math.random() * (high - low) + low);
-}
